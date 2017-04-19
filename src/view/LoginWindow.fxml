@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane prefHeight="214.0" prefWidth="339.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.LoginWindowController">
+<BorderPane prefHeight="214.0" prefWidth="339.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.LoginWindowController">
    <center>
       <GridPane prefHeight="214.0" prefWidth="387.0" BorderPane.alignment="CENTER">
         <columnConstraints>
@@ -25,7 +25,7 @@
         </rowConstraints>
          <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome on Clavardeur 3000" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-            <TextField fx:id="userNameTextField" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP" />
+            <TextField fx:id="userNameTextField" onAction="#onEnter" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP" />
             <Label text="Choose a beautiful user name" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
             <Button fx:id="logInButton" mnemonicParsing="false" onAction="#handleLoginButtonAction" text="Connect" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="TOP" />
          </children>

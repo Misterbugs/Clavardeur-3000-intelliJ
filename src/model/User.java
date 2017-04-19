@@ -96,6 +96,11 @@ public class User implements Serializable{
 	public String getUserNameString(){
 		return userName.getValueSafe().toString();
 	}
-	
+
+
+	static public String fullUserName(String username, Address addr){
+		return username + "_" + addr.getStringPropertyAddress().getValueSafe().toString();
+
+	}
 
 }

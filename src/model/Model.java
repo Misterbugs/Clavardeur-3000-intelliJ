@@ -7,6 +7,8 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
+import message.MsgFactory;
+import network.Network;
 
 
 public class Model {
@@ -25,7 +27,8 @@ public class Model {
 	 * This is the representation of the person reading this...
 	 */
 	private User localUser = null;
-	
+	private String userName;
+
 	/**
 	 * A singleton to be sure of unity of the Model instantiation
 	 *
@@ -167,6 +170,20 @@ public class Model {
 		return localUser;
 	}
 
+	public int logIn(String userName){
+
+		createLocalUser(userName);
+
+
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		Network.getInstance().sendMessage(MsgFactory.createHelloMessage(localUser, Network.getInstance().getBroadcastAddress()));
+		return 1;
+	}
+
 	public User getLocalUser() {
 		return localUser;
 	}
@@ -174,8 +191,4 @@ public class Model {
 	public void setLocalUser(User localUser) {
 		this.localUser = localUser;
 	}
-	
-	
-	
-	
 }
