@@ -1,6 +1,8 @@
 package view;
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import controller.MainApp;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -10,10 +12,11 @@ import message.Message;
 import message.MsgFactory;
 import message.MsgText;
 import model.Conversation;
+import model.IConversationObserver;
 import model.Model;
 import model.SimpleConversation;
 
-public class ConversationOverviewController {
+public class ConversationOverviewController implements IConversationObserver {
 
 	@FXML
 	private Button button;
@@ -26,6 +29,7 @@ public class ConversationOverviewController {
 
 	private Conversation conversation;
 
+	private boolean shiftPressed = false;
 
 	//reference to the main application
 	private MainApp mainApp;
@@ -36,17 +40,37 @@ public class ConversationOverviewController {
 //	}
 //	
 
+
 	/**
 	 * Initializer called after the fxml file has been loaded
 	 */
 	@FXML
 	private void initialize() {
 
+
+
+
 		//Lambda to make the enter key send message
 		textToSend.setOnKeyPressed((event) -> {
-			if (event.getCode() == KeyCode.ENTER) {
+			if (event.getCode() == KeyCode.SHIFT) {
+				System.out.println("Shift Pressed");
+				shiftPressed = true;
+			}
+
+			if ((event.getCode() == KeyCode.ENTER) && !shiftPressed) {
+				event.consume();
 				sendText();
 			}
+		});
+
+
+
+		textToSend.setOnKeyReleased((event) -> {
+			if (event.getCode() == KeyCode.SHIFT) {
+				shiftPressed = false;
+				System.out.println("Shift released");
+			}
+
 		});
 
 	}
@@ -74,6 +98,7 @@ public class ConversationOverviewController {
 
 	public void setConversation(Conversation conversation) {
 		this.conversation = conversation;
+		conversation.register(this);
 	}
 
 	public Conversation getConversation() {
@@ -98,22 +123,36 @@ public class ConversationOverviewController {
 
 	}
 
-	private void sendText(){
+
+	private void sendText() {
 		//Send text if the text area is not empty
 		if (!(textToSend.getText().equals(""))) {
 			System.out.println("Sending TextMessage");
 
-			Message msg = MsgFactory.createMessage(Model.getInstance().getLocalUser(),  ((SimpleConversation)conversation).getReceiver(), textToSend.getText()); //TODO c'est limite
+			Message msg = MsgFactory.createMessage(Model.getInstance().getLocalUser(), ((SimpleConversation) conversation).getReceiver(), textToSend.getText()); //TODO c'est limite
 			mainApp.net.sendMessage(msg);
-			conversation.addMessage((MsgText)msg); //TODO à changer
-			previousMessages.appendText("\n" + textToSend.getText());
+			conversation.addMessage((MsgText) msg); //TODO à changer
+			//previousMessages.appendText("\n" + textToSend.getText());
 
 			System.out.println("Conv : ");
 			System.out.println(conversation.toString());
 			textToSend.clear();
+			//textToSend.end();
 		}
 	}
 
+	@Override
+	public void update(Message mesg) {
+		//synchronized (this) {
+			System.out.println("New message update !");
+			//previousMessages.appendText(mesg.getSourceUserName() + " : " + ((MsgText) mesg).getTextMessage());
+
+			Platform.runLater(()->{
+				previousMessages.appendText(mesg.getSourceUserName() + " : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
+			});
+		//}
+
+	}
 }
 
 

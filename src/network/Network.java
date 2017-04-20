@@ -192,7 +192,7 @@ public class Network implements INetworkSubject{
 					else{
 						System.out.println(addr.getHostAddress());
 
-						if(addr.getHostAddress().matches("192.*") || addr.getHostAddress().length() > 12){
+						if(addr.getHostAddress().matches("192.168.56*") || addr.getHostAddress().length() > 12){
 
 							System.out.println("Raté");
 						}

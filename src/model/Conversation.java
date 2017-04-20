@@ -3,6 +3,7 @@ package model;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import message.Message;
 import message.MsgText;
 
 /**
@@ -11,14 +12,15 @@ import message.MsgText;
  * @author Florian Clanet
  *
  */
-public class Conversation implements Serializable{
+public class Conversation implements Serializable, IConversationSubject{
 	
 	/**
 	 * The complete list of previous messages TODO change MsgText into Message
 	 */
 	private ArrayList<MsgText> messageList = new ArrayList<MsgText>();
-	
-	
+
+	private ArrayList<IConversationObserver> observers = new ArrayList<IConversationObserver>();
+
 	
 	public Conversation(){
 		messageList = new ArrayList<MsgText>();
@@ -27,6 +29,7 @@ public class Conversation implements Serializable{
 	public void addMessage(MsgText message){
 		//TODO Check the last message not to send 2 time the same thing
 		this.messageList.add(message);
+		notifyObserver(message);
 		
 	}
 
@@ -46,8 +49,24 @@ public class Conversation implements Serializable{
 		return "Conversation [messageList=" + messageList.toString() + "]";
 	}
 
-	
-	
-	
 
+	@Override
+	public void register(IConversationObserver o) {
+
+		if(!observers.contains(o)){
+			observers.add(o);
+		}
+	}
+
+	@Override
+	public void unregister(IConversationObserver o) {
+		observers.remove(o);
+	}
+
+	@Override
+	public void notifyObserver(Message mesg) {
+		for(IConversationObserver o : observers){
+			o.update(mesg);
+		}
+	}
 }
