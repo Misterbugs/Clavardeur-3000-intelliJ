@@ -1,6 +1,7 @@
 package controller;
 
 import com.sun.org.apache.xpath.internal.operations.Mod;
+import javafx.application.Platform;
 import message.*;
 import model.Address;
 import model.Model;
@@ -46,7 +47,9 @@ public class NetworkHandler implements INetworkObserver{
 
 				String fullUserName = User.fullUserName(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()));
 				System.out.println("Created username : " + fullUserName);
-				Model.getInstance().getSimpleConversations().get(fullUserName).addMessage(txtMesg);
+
+				 Model.getInstance().getSimpleConversations().get(fullUserName).addMessage(txtMesg);
+
 
 			} else if (mesg instanceof MsgHello) {
 
@@ -96,6 +99,11 @@ public class NetworkHandler implements INetworkObserver{
 	
 	public int sendMessage(Message message){
 		//TODO add error codes
+
+		System.out.println("Sending message of type " + message.getClass().toString());
+		System.out.println("Src : "+ message.getSourceUserName() + " @" + message.getSourceAddress());
+		System.out.println("Dest : @" + message.getDestinationAddress());
+
 		net.sendMessage(message);
 		return 0;
 	}

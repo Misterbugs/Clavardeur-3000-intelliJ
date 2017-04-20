@@ -75,6 +75,25 @@ public class Model {
 	public ObservableMap<String, SimpleConversation> getSimpleConversations() {
 		return simpleConversations;
 	}
+
+
+	public int addSimpleConversation(User usr){
+		if(simpleConversations.get(usr.getFullUserName())!=null){
+			System.out.println("Conversation already exists!");
+			return 0;
+		}
+		else{
+			simpleConversations.put(usr.getFullUserName(), new SimpleConversation(usr));
+		}
+		return 1;
+
+	}
+
+	public SimpleConversation getConversation(String fullName){
+		return simpleConversations.get(fullName);
+	}
+
+
 	
 	/**
 	 * Add a User to the knownUser list
@@ -86,24 +105,14 @@ public class Model {
 		
 		if(findUser(usr.getFullUserName()) == null){
 			System.out.println("Adding " + usr.getFullUserName() + " to known users !");
-			
-			//System.out.println("Platform : " + Platform.accessibilityActiveProperty());
-			//Platform.runLater(() -> knownUsers.add(usr));
-			
-			
-			//knownUsers.add(usr);
-			
-			
-			
+
 			knownUsers.add(usr); //Somehow this works.... Or does it?
-			
+			addSimpleConversation(usr);
 			System.out.println("List of the known users");
 			for(User user : knownUsers){
 				System.out.println(user.getFullUserName());
 				
 			}
-			
-			
 			return 1;
 		}
 		else{

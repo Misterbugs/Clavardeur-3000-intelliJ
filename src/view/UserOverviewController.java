@@ -52,7 +52,7 @@ public class UserOverviewController {
 			cell.setOnMouseClicked(e -> {
 				if(!cell.isEmpty()){
 					String userName = cell.getItem().getUserNameString();
-					System.out.println("Youpi ça marche !" + userName);
+					System.out.println("Youpi ï¿½a marche !" + userName);
 					
 					//gets the User from the mainApp userList
 					User receiver = cell.getItem();
@@ -65,10 +65,12 @@ public class UserOverviewController {
 						mainApp.showSimpleConversationOverview(conversationId);
 					}else{
 						//If it does not exist, let's create it !
-						SimpleConversation newConversation = new SimpleConversation(receiver);
+						/*SimpleConversation newConversation = new SimpleConversation(receiver);
 						Model.getInstance().getSimpleConversations().put(conversationId, newConversation);
 						System.out.println("Creating conversation...");
 						mainApp.showSimpleConversationOverview(conversationId);
+						*/
+						System.out.println("Conversation doesn't exist!");
 					}
 					
 					

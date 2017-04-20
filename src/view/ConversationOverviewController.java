@@ -11,6 +11,7 @@ import message.MsgFactory;
 import message.MsgText;
 import model.Conversation;
 import model.Model;
+import model.SimpleConversation;
 
 public class ConversationOverviewController {
 
@@ -102,7 +103,7 @@ public class ConversationOverviewController {
 		if (!(textToSend.getText().equals(""))) {
 			System.out.println("Sending TextMessage");
 
-			Message msg = MsgFactory.createMessage(Model.getInstance().getLocalUser(), Model.getInstance().getLocalUser(), textToSend.getText());
+			Message msg = MsgFactory.createMessage(Model.getInstance().getLocalUser(),  ((SimpleConversation)conversation).getReceiver(), textToSend.getText()); //TODO c'est limite
 			mainApp.net.sendMessage(msg);
 			conversation.addMessage((MsgText)msg); //TODO à changer
 			previousMessages.appendText("\n" + textToSend.getText());

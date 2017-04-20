@@ -51,19 +51,7 @@ public class MainApp extends Application {
 		
 		userData = Model.getInstance().getKnownUsers();
 		
-		//Test
-		
-		Address broadcastAddr = Network.getInstance().getBroadcastAddress();
-		InetAddress inet = null;
-		try {
-			inet = InetAddress.getLocalHost();
-		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		User localUsr = new User("John Doe", new Address( inet, 2048), true) ;
-		Message m = MsgFactory.createHelloMessage(localUsr, broadcastAddr);
-		net.sendMessage(m);
+		//T
 		
 		//Fin test
 		
