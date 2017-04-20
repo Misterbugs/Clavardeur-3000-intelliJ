@@ -60,7 +60,8 @@ public class NetworkHandler implements INetworkObserver{
 					Model.getInstance().addUser(usr, true);
 
 					System.out.println("Replying");
-					MsgFactory.createReplyPresence(Model.getInstance().getLocalUser(), usr);
+					Message replymesg = MsgFactory.createReplyPresence(Model.getInstance().getLocalUser(), usr);
+					sendMessage(replymesg);
 				}
 
 
