@@ -22,6 +22,9 @@ public class Network implements INetworkSubject{
 	DatagramSocket sock;
 	int port = 2048; //default value
 	InetAddress IPAddress;
+
+	private Address localAddress;
+	private Address broadcastAddress;
 	
     private ArrayList<INetworkObserver> observers;
 
@@ -56,13 +59,12 @@ public class Network implements INetworkSubject{
 	private Network(){
 		
 		observers = new ArrayList<INetworkObserver>();
-		try {
-			IPAddress = InetAddress.getByName("localhost");
-		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+
+		if(initAddresses()==0){
+			System.out.println("Messed up addresses");
+
 		}
-		
+
 		try {
 			sock = new DatagramSocket(port);
 		} catch (SocketException e1) {
@@ -170,7 +172,7 @@ public class Network implements INetworkSubject{
 
 
 
-	public Address getLocalAddress() {
+	private int initAddresses(){
 
 		try {
 
@@ -194,8 +196,15 @@ public class Network implements INetworkSubject{
 
 							System.out.println("Raté");
 						}
-						else return new Address(addr, port);
+						else {
 
+
+							System.out.println("Addr broadcast : "   + netint.getInterfaceAddresses().get(0).getBroadcast().toString()); //TODO Réparer
+							System.out.println("Addr locale : " + addr.toString());
+							broadcastAddress = new Address (netint.getInterfaceAddresses().get(0).getBroadcast(), port );
+							localAddress = new Address(addr, port);
+							return 1;
+						}
 					}
 				}
 			}
@@ -203,10 +212,15 @@ public class Network implements INetworkSubject{
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
-		return null;
 
+		return 0;
 	}
 
+
+
+	public Address getLocalAddress() {
+		return localAddress;
+	}
 
 	static void displayInterfaceInformation(NetworkInterface netint) throws SocketException {
 		System.out.printf("Display name: %s\n", netint.getDisplayName());
@@ -219,7 +233,7 @@ public class Network implements INetworkSubject{
 	}
 
 	public Address getBroadcastAddress(){
-		InetAddress broadcastIpAddress = null;
+		/*InetAddress broadcastIpAddress = null;
 
 		broadcastIpAddress = getLocalAddress().getIpAdress();
 		getLocalAddress();
@@ -234,7 +248,12 @@ public class Network implements INetworkSubject{
 		}
 		
 		System.out.println("Generated Broadcast Address : " + addr.getIpAdress().getHostAddress());
-		return addr;
+		*/
+		return broadcastAddress;
+
+
+
+
 	}
 	
 	
