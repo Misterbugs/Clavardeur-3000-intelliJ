@@ -106,7 +106,10 @@ public class Model {
 		if(findUser(usr.getFullUserName()) == null){
 			System.out.println("Adding " + usr.getFullUserName() + " to known users !");
 
-			knownUsers.add(usr); //Somehow this works.... Or does it?
+			 //Somehow this works.... Or does it?
+
+			Platform.runLater(()-> {knownUsers.add(usr);});
+
 			addSimpleConversation(usr);
 			System.out.println("List of the known users");
 			for(User user : knownUsers){
