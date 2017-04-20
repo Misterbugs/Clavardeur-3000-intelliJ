@@ -6,12 +6,10 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 
 import controller.INetworkObserver;
 import message.Message;
@@ -169,16 +167,63 @@ public class Network implements INetworkSubject{
 		};
 	
 	}
-	
-	
-	public Address getBroadcastAddress(){
-		InetAddress broadcastIpAddress = null;
+
+
+
+	public Address getLocalAddress() {
+
 		try {
-			broadcastIpAddress = InetAddress.getLocalHost();
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
+
+			Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
+			for (NetworkInterface netint : Collections.list(nets)) {
+
+
+				if(netint.isLoopback() ||  netint.isVirtual()){
+					continue;
+				}
+				Enumeration<InetAddress> inetenum =  netint.getInetAddresses();
+				for(InetAddress addr : Collections.list( inetenum)){
+					//System.out.println(addr.);
+					if(addr.isAnyLocalAddress() || addr.isLoopbackAddress() || addr.isLinkLocalAddress() ||addr.isAnyLocalAddress() ){
+						continue;
+					}
+					else{
+						System.out.println(addr.getHostAddress());
+
+						if(addr.getHostAddress().matches("192.*") || addr.getHostAddress().length() > 12){
+
+							System.out.println("Raté");
+						}
+						else return new Address(addr, port);
+
+					}
+				}
+			}
+
+		} catch (SocketException e) {
 			e.printStackTrace();
 		}
+		return null;
+
+	}
+
+
+	static void displayInterfaceInformation(NetworkInterface netint) throws SocketException {
+		System.out.printf("Display name: %s\n", netint.getDisplayName());
+		System.out.printf("Name: %s\n", netint.getName());
+		Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
+		for (InetAddress inetAddress : Collections.list(inetAddresses)) {
+			System.out.printf("InetAddress: %s\n", inetAddress);
+		}
+		System.out.printf("\n");
+	}
+
+	public Address getBroadcastAddress(){
+		InetAddress broadcastIpAddress = null;
+
+		broadcastIpAddress = getLocalAddress().getIpAdress();
+		getLocalAddress();
+
 		System.out.println("local address " + broadcastIpAddress.getHostAddress());
 		Address addr =null;
 		try {

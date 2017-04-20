@@ -157,14 +157,10 @@ public class Model {
 	 */
 	public User createLocalUser(String name){
 		if(localUser == null){
-			InetAddress inet = null;
-			try {
-				inet = InetAddress.getLocalHost();
-			} catch (UnknownHostException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			localUser = new User(name, new Address( inet, 2048), true) ;
+			Address addr = null;
+			addr = Network.getInstance().getLocalAddress();
+
+			localUser = new User(name, addr, true) ;
 		}
 		else{System.out.println("Local user already created !");}
 		return localUser;
