@@ -1,11 +1,7 @@
 package controller;
 
-import message.Message;
-import message.MsgAck;
-import message.MsgBye;
-import message.MsgFile;
-import message.MsgHello;
-import message.MsgText;
+import com.sun.org.apache.xpath.internal.operations.Mod;
+import message.*;
 import model.Address;
 import model.Model;
 import model.User;
@@ -57,17 +53,39 @@ public class NetworkHandler implements INetworkObserver{
 				User usr = new User(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()), true);
 
 				if(usr.getFullUserName().equals( Model.getInstance().getLocalUser().getFullUserName())  && !seeLocalUser){
-					System.out.println("Received our own hello message ");
+					System.out.println("Received our own hello message => IGNORED");
 				}else{
 					System.out.println("Hello :) Adding to the UserList");
 
 					Model.getInstance().addUser(usr, true);
+
+					System.out.println("Replying");
+					MsgFactory.createReplyPresence(Model.getInstance().getLocalUser(), usr);
 				}
 
-			} else if (mesg instanceof MsgBye) {
+
+
+			}
+			else if (mesg instanceof  MsgReplyPresence){
+				User usr = new User(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()), true);
+
+				if(usr.getFullUserName().equals( Model.getInstance().getLocalUser().getFullUserName())  && !seeLocalUser){
+					System.out.println("Received our own ReplyPresence message ");
+				}else{
+					System.out.println("Someone replied :) Adding to the UserList");
+
+					Model.getInstance().addUser(usr, true);
+				}
+
+			}
+			else if (mesg instanceof MsgBye) {
 				System.out.println("The user has left");
 				Model.getInstance().updateUserStatus(Model.getInstance().findUser(mesg.getSourceUserName() + "_" + mesg.getSourceAddress() + ":" + mesg.getDestinationPort()), false);
-			} else if (mesg instanceof MsgFile) {
+			}
+
+
+
+			else if (mesg instanceof MsgFile) {
 				System.out.println("Testing File Received");
 
 			}

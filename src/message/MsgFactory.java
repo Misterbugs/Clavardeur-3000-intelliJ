@@ -20,7 +20,13 @@ public final class MsgFactory {
 				broadcastAddress.getIpAdress(), broadcastAddress.getPort(), messageNumber++);
 	 }
 	 public static Message createByeMessage(User sourceUsr, Address broadcastAddress){
-			return new MsgBye(sourceUsr.getAddress().getIpAdress(), sourceUsr.getAddress().getPort(), sourceUsr.getUserName().get(), 
+			return new MsgBye(sourceUsr.getAddress().getIpAdress(), sourceUsr.getAddress().getPort(), sourceUsr.getUserName().get(),
 					broadcastAddress.getIpAdress(), broadcastAddress.getPort(), messageNumber++);
-		 }
+	 }
+
+	 public static Message createReplyPresence(User sourceUsr, User destUsr){
+		 return new MsgReplyPresence(sourceUsr.getAddress().getIpAdress(), sourceUsr.getAddress().getPort(), sourceUsr.getUserName().get(),
+				 destUsr.getAddress().getIpAdress(), sourceUsr.getAddress().getPort(), messageNumber++);
+	 }
+
 }
