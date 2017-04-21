@@ -26,7 +26,7 @@ public class ConversationOverviewController implements IConversationObserver {
 
 	private Conversation conversation;
 
-	private boolean shiftPressed = false;
+	private boolean shiftPressed = false; //TODO make shift work
 
 	private Model model;
 
@@ -51,10 +51,10 @@ public class ConversationOverviewController implements IConversationObserver {
 
 		//Lambda to make the enter key send message
 		textToSend.setOnKeyPressed((event) -> {
-			if (event.getCode() == KeyCode.SHIFT) {
+			/*if (event.getCode() == KeyCode.SHIFT) {
 				System.out.println("Shift Pressed");
 				shiftPressed = true;
-			}
+			}*/
 
 			if ((event.getCode() == KeyCode.ENTER) && !shiftPressed) {
 				event.consume();
@@ -64,14 +64,14 @@ public class ConversationOverviewController implements IConversationObserver {
 
 
 
-		textToSend.setOnKeyReleased((event) -> {
+		/*textToSend.setOnKeyReleased((event) -> {
 			if (event.getCode() == KeyCode.SHIFT) {
 				shiftPressed = false;
 				System.out.println("Shift released");
 			}
 
 		});
-
+		*/
 
 
 	}
@@ -132,15 +132,15 @@ public class ConversationOverviewController implements IConversationObserver {
 	private void sendText() {
 		//Send text if the text area is not empty
 		if (!(textToSend.getText().equals(""))) {
-			System.out.println("Sending TextMessage");
+			//System.out.println("Sending TextMessage");
 
 			Message msg = MsgFactory.createMessage(model.getLocalUser(), ((SimpleConversation) conversation).getReceiver(), textToSend.getText()); //TODO c'est limite
 			mainApp.net.sendMessage(msg);
 			conversation.addMessage((MsgText) msg); //TODO à changer
 			//previousMessages.appendText("\n" + textToSend.getText());
 
-			System.out.println("Conv : ");
-			System.out.println(conversation.toString());
+			//System.out.println("Conv : ");
+			//System.out.println(conversation.toString());
 			textToSend.clear();
 			//textToSend.end();
 		}
@@ -149,7 +149,7 @@ public class ConversationOverviewController implements IConversationObserver {
 	@Override
 	public void update(Message mesg) {
 		//synchronized (this) {
-			System.out.println("New message update !");
+			//System.out.println("New message update !");
 			appendMessage(mesg);
 
 	}

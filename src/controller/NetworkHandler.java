@@ -36,6 +36,7 @@ public class NetworkHandler implements INetworkObserver{
 	 */
 	@Override
 	public void update(Message mesg) {
+		System.out.println();
 		System.out.println("HANDLER : A message is received from " + mesg.getSourceUserName() + " of type " + mesg.getClass());
 
 		if (Model.getInstance().getLocalUser() != null) {
@@ -46,9 +47,12 @@ public class NetworkHandler implements INetworkObserver{
 				System.out.println("Text message : \"" + txtMesg.getTextMessage() + "\""); //DEBUG
 
 				String fullUserName = User.fullUserName(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()));
-				System.out.println("Created username : " + fullUserName);
+				//System.out.println("Created username : " + fullUserName);
 
-				 Model.getInstance().getSimpleConversations().get(fullUserName).addMessage(txtMesg);
+				Model.getInstance().getSimpleConversations().get(fullUserName).addMessage(txtMesg);
+
+				//sending ACK
+				sendMessage(MsgFactory.createAckMessage(mesg));
 
 
 			} else if (mesg instanceof MsgHello) {
@@ -94,15 +98,20 @@ public class NetworkHandler implements INetworkObserver{
 
 			}
 
+			else if (mesg instanceof MsgAck){
+				System.out.println("Received ACK for message #" + ((MsgAck)mesg).getNumMessage());
+			}
+
 		}
 	}
 	
 	public int sendMessage(Message message){
 		//TODO add error codes
-
+		System.out.println();
 		System.out.println("Sending message of type " + message.getClass().toString());
 		System.out.println("Src : "+ message.getSourceUserName() + " @" + message.getSourceAddress());
 		System.out.println("Dest : @" + message.getDestinationAddress());
+		System.out.println("message #" + message.getNumMessage());
 
 		net.sendMessage(message);
 		return 0;

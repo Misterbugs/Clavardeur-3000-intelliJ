@@ -173,7 +173,10 @@ public class MainApp extends Application {
 
 			primaryStage.setOnCloseRequest(e->{
 				Platform.exit();
-				Model.getInstance().logOut();
+
+				if(Model.getInstance().getLocalUser() != null) {
+                    Model.getInstance().logOut();
+                }
 				System.out.println("Terminating ...");
 				System.exit(1);
 			});

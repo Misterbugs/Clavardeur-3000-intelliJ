@@ -1,6 +1,7 @@
 package message;
 
 import model.Address;
+import model.Model;
 import model.User;
 
 public final class MsgFactory {
@@ -27,6 +28,11 @@ public final class MsgFactory {
 	 public static Message createReplyPresence(User sourceUsr, User destUsr){
 		 return new MsgReplyPresence(sourceUsr.getAddress().getIpAdress(), sourceUsr.getAddress().getPort(), sourceUsr.getUserName().get(),
 				 destUsr.getAddress().getIpAdress(), sourceUsr.getAddress().getPort(), messageNumber++);
+	 }
+
+	 public static Message createAckMessage(Message originalMessage){
+	 	return new MsgAck(originalMessage.getDestinationAddress(), originalMessage.getDestinationPort(),
+				Model.getInstance().getLocalUser().getUserNameString(), originalMessage.getSourceAddress(), originalMessage.getSourcePort(), originalMessage.getNumMessage());
 	 }
 
 }

@@ -13,8 +13,8 @@ import model.User;
  
 public class UserOverviewController {
 
-	@FXML
-	ObservableList<User> data = FXCollections.observableArrayList();
+	//@FXML
+	//ObservableList<User> data = FXCollections.observableArrayList();
 	@FXML
 	private ListView<User> userTable;
 	
@@ -48,12 +48,14 @@ public class UserOverviewController {
 					setText(empty ? null : user.getUserNameString() +" : " + (user.getIsConnected() ? "Connected" : "Not Connected"));
 				}
 			};
+
+
 			
 			//Here we try to deal with user interaction for opening conversations
 			cell.setOnMouseClicked(e -> {
 				if(!cell.isEmpty()){
 					String userName = cell.getItem().getUserNameString();
-					System.out.println("Youpi �a marche !" + userName);
+					//System.out.println("Youpi �a marche !" + userName);
 					
 					//gets the User from the mainApp userList
 					User receiver = cell.getItem();
