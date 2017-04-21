@@ -103,4 +103,11 @@ public class User implements Serializable{
 
 	}
 
+	public boolean	isLocalUser(User usr){
+		if(usr.getFullUserName().equals(Model.getInstance().getLocalUser().getFullUserName())){
+			return true;
+		}
+		else return false;
+	}
+
 }

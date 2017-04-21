@@ -36,7 +36,7 @@ public class MainApp extends Application {
 	private ObservableMap<String, User> userData;o store and find users
 	 */
 	//private ObservableMap<String, User> userData = FXCollections.observableHashMap();
-	private ObservableList<User> userData;
+	//private ObservableList<User> userData;
 
 	//private ObservableMap<String, SimpleConversation> simpleConversations=FXCollections.observableHashMap();
 	//private ArrayList<Conversation> serializableConversations = new ArrayList<Conversation>();
@@ -49,7 +49,7 @@ public class MainApp extends Application {
 		
 		net = new NetworkHandler( Network.getInstance());
 		
-		userData = Model.getInstance().getKnownUsers();
+		//userData = Model.getInstance().getKnownUsers();
 		
 		//T
 		
@@ -269,9 +269,9 @@ public class MainApp extends Application {
 		}
 	}
 	
-	public ObservableList<User> getUserData(){
-		return userData;
-	}
+	//public ObservableList<User> getUserData(){
+	//	return userData;
+	//}
 
 	public static void main(String[] args) {
 		launch(args);

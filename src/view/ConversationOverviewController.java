@@ -11,10 +11,7 @@ import javafx.scene.input.KeyCode;
 import message.Message;
 import message.MsgFactory;
 import message.MsgText;
-import model.Conversation;
-import model.IConversationObserver;
-import model.Model;
-import model.SimpleConversation;
+import model.*;
 
 public class ConversationOverviewController implements IConversationObserver {
 
@@ -30,6 +27,8 @@ public class ConversationOverviewController implements IConversationObserver {
 	private Conversation conversation;
 
 	private boolean shiftPressed = false;
+
+	private Model model;
 
 	//reference to the main application
 	private MainApp mainApp;
@@ -47,7 +46,7 @@ public class ConversationOverviewController implements IConversationObserver {
 	@FXML
 	private void initialize() {
 
-
+		model = Model.getInstance();
 
 
 		//Lambda to make the enter key send message
@@ -72,6 +71,8 @@ public class ConversationOverviewController implements IConversationObserver {
 			}
 
 		});
+
+
 
 	}
 
@@ -129,7 +130,7 @@ public class ConversationOverviewController implements IConversationObserver {
 		if (!(textToSend.getText().equals(""))) {
 			System.out.println("Sending TextMessage");
 
-			Message msg = MsgFactory.createMessage(Model.getInstance().getLocalUser(), ((SimpleConversation) conversation).getReceiver(), textToSend.getText()); //TODO c'est limite
+			Message msg = MsgFactory.createMessage(model.getLocalUser(), ((SimpleConversation) conversation).getReceiver(), textToSend.getText()); //TODO c'est limite
 			mainApp.net.sendMessage(msg);
 			conversation.addMessage((MsgText) msg); //TODO à changer
 			//previousMessages.appendText("\n" + textToSend.getText());
@@ -145,13 +146,26 @@ public class ConversationOverviewController implements IConversationObserver {
 	public void update(Message mesg) {
 		//synchronized (this) {
 			System.out.println("New message update !");
-			//previousMessages.appendText(mesg.getSourceUserName() + " : " + ((MsgText) mesg).getTextMessage());
+			appendMessage(mesg);
 
-			Platform.runLater(()->{
-				previousMessages.appendText(mesg.getSourceUserName() + " : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
-			});
-		//}
+	}
 
+
+	/**
+	 * Prints a message in the conversation textArea
+	 * @param mesg
+	 */
+	public void appendMessage(Message mesg){
+		Platform.runLater(()->{
+		String fullUserName = User.fullUserName(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()));
+			if(fullUserName.equals(model.getLocalUser().getFullUserName())){
+				previousMessages.appendText("You : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
+			}else{
+
+			}
+
+			//previousMessages.appendText(mesg.getSourceUserName() + " : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
+		});
 	}
 }
 

@@ -1,5 +1,6 @@
 package view;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import controller.MainApp;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -86,8 +87,8 @@ public class UserOverviewController {
 	public void setMainApp(MainApp mainApp){
 		this.mainApp = mainApp;
 		//data = mainApp.getUserData();
-		userTable.setItems(this.mainApp.getUserData());
-		
+		//userTable.setItems(this.mainApp.getUserData());
+		userTable.setItems(Model.getInstance().getKnownUsers());
 		
 		
 		

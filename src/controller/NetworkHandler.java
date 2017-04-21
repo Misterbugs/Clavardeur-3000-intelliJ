@@ -74,7 +74,7 @@ public class NetworkHandler implements INetworkObserver{
 				User usr = new User(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()), true);
 
 				if(usr.getFullUserName().equals( Model.getInstance().getLocalUser().getFullUserName())){
-					System.out.println("Received our own ReplyPresence message ");
+					System.out.println("Received our own ReplyPresence message => IGNORED ");
 				}else{
 					System.out.println("Someone replied :) Adding to the UserList");
 
@@ -84,7 +84,7 @@ public class NetworkHandler implements INetworkObserver{
 			}
 			else if (mesg instanceof MsgBye) {
 				System.out.println("The user has left");
-				Model.getInstance().updateUserStatus(Model.getInstance().findUser(mesg.getSourceUserName() + "_" + mesg.getSourceAddress() + ":" + mesg.getDestinationPort()), false);
+				Model.getInstance().updateUserStatus(Model.getInstance().getUser(mesg.getSourceUserName() + "_" + mesg.getSourceAddress() + ":" + mesg.getDestinationPort()), false);
 			}
 
 

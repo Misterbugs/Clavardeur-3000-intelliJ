@@ -59,7 +59,7 @@ public class Model {
 	 * @param fullUserName The full user name on this format : userName_Address
 	 * @return The User if it was found | null if not
 	 */
-	public User findUser(String fullUserName){
+	public User getUser(String fullUserName){
 		System.out.println("Looking for " + fullUserName);
 		for(User usr : knownUsers){
 			System.out.println("current : " + usr.getFullUserName());
@@ -103,7 +103,7 @@ public class Model {
 	 */
 	public int addUser(User usr, Boolean isConnected){
 		
-		if(findUser(usr.getFullUserName()) == null){
+		if(getUser(usr.getFullUserName()) == null){
 			System.out.println("Adding " + usr.getFullUserName() + " to known users !");
 
 			 //Somehow this works.... Or does it?
@@ -131,9 +131,9 @@ public class Model {
 	 * @return 1 if it was successful| -1 if usr is not known
 	 */
 	public int updateUserStatus(User usr, Boolean isConnected){
-		if(findUser(usr.getFullUserName()) != null){
+		if(getUser(usr.getFullUserName()) != null){
 			System.out.println("Updating " + usr.getUserNameString() + " status. isConnected = " +isConnected);
-			findUser(usr.getFullUserName()).setIsConnected(isConnected);
+			getUser(usr.getFullUserName()).setIsConnected(isConnected);
 		
 			return 1;
 		}
@@ -151,7 +151,7 @@ public class Model {
 	
 	//TODO Why do we have a isConnected bool and we also remove users when not connected ?
 	public int removeUser(User usr){
-		if(findUser(usr.getFullUserName()) != null){
+		if(getUser(usr.getFullUserName()) != null){
 			System.out.println("Removing " + usr.getUserNameString() + " from known users !");
 			knownUsers.remove(usr.getUserNameString());
 			return 1;
