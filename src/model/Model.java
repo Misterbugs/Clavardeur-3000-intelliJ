@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import message.MsgFactory;
+import message.MsgText;
 import network.Network;
 
 
@@ -108,14 +109,14 @@ public class Model {
 
 			 //Somehow this works.... Or does it?
 
-			Platform.runLater(()-> {knownUsers.add(usr);});
+			Platform.runLater(()-> {knownUsers.add(usr);}); //TODO find a workaround
 
 			addSimpleConversation(usr);
-			System.out.println("List of the known users");
+			/*System.out.println("List of the known users");
 			for(User user : knownUsers){
 				System.out.println(user.getFullUserName());
 				
-			}
+			}*/
 			return 1;
 		}
 		else{
@@ -189,6 +190,12 @@ public class Model {
 			e.printStackTrace();
 		}
 		Network.getInstance().sendMessage(MsgFactory.createHelloMessage(localUser, Network.getInstance().getBroadcastAddress()));
+		return 1;
+	}
+
+	public int logOut(){
+		System.out.println("Logging out");
+		Network.getInstance().sendMessage(MsgFactory.createByeMessage(localUser, Network.getInstance().getBroadcastAddress()));
 		return 1;
 	}
 

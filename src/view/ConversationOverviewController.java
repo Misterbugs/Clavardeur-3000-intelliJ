@@ -99,6 +99,9 @@ public class ConversationOverviewController implements IConversationObserver {
 
 	public void setConversation(Conversation conversation) {
 		this.conversation = conversation;
+		for(MsgText m : conversation.getMessageList()){
+			appendMessage(m);
+		}
 		conversation.register(this);
 	}
 
@@ -120,6 +123,7 @@ public class ConversationOverviewController implements IConversationObserver {
 	 * @param event
 	 */
 	public void handleSendButtonAction(ActionEvent event) {
+		textToSend.requestFocus();
 		sendText();
 
 	}
@@ -161,10 +165,8 @@ public class ConversationOverviewController implements IConversationObserver {
 			if(fullUserName.equals(model.getLocalUser().getFullUserName())){
 				previousMessages.appendText("You : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
 			}else{
-
+				previousMessages.appendText(mesg.getSourceUserName() + " : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
 			}
-
-			//previousMessages.appendText(mesg.getSourceUserName() + " : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
 		});
 	}
 }

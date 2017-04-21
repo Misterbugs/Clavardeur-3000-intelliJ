@@ -45,7 +45,7 @@ public class UserOverviewController {
 				@Override
 				protected void updateItem(User user, boolean empty){
 					super.updateItem(user, empty);
-					setText(empty ? null : user.getUserNameString());
+					setText(empty ? null : user.getUserNameString() +" : " + (user.getIsConnected() ? "Connected" : "Not Connected"));
 				}
 			};
 			

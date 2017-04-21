@@ -45,8 +45,6 @@ public class Network implements INetworkSubject{
 
 	@Override
 	public void notifyObserver(Message mesg) {
-		System.out.println("number of observers = " + observers.size());
-		
 		for(INetworkObserver o : observers){
 			o.update(mesg);
 		}
@@ -79,37 +77,22 @@ public class Network implements INetworkSubject{
 				byte[] receiveData = new byte[1024];
 				ByteArrayInputStream bis = new ByteArrayInputStream(receiveData);
 				ObjectInput in = null;
-				
-				
-				
-				
-				//ObjectInputStream input = new ObjectInputStream(new FileInputStream("test.tmp"));
+
 				System.out.println("Socket Started !");
 				while(true){
-					//System.out.println("oijoij");
+
 					DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 					
 					try {
 						sock.receive(receivePacket);
-						/*if(in == null){
-							in = new ObjectInputStream(bis);
-						}*/
-						//System.out.println(in.available());
-						
 						ObjectInputStream iStream = new ObjectInputStream(new ByteArrayInputStream(receiveData));
 						Object o = iStream.readObject();
 						iStream.close();
-						
-						//Object o = in.readObject();
-						//System.out.println(in.available());
-												
+
 						if(o instanceof Message){
-							System.out.println("Message Received");
 							Message mesg = (Message)o;
 							notifyObserver(mesg);
-							
-							/*MsgText msg = (MsgText)o;
-							System.out.println("Le message deserialse " + o.getClass() + "\nMessage : " + msg.getTextMessage());*/
+
 						}else{
 							System.out.println("Object received is not a message, class is " + o.getClass().toString());
 							//TODO make a throw declaration?
@@ -121,10 +104,6 @@ public class Network implements INetworkSubject{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
-					
-					//String sentence =new String(receivePacket.getData(),0, receivePacket.getLength());
-					System.out.println("RECEIVED");
 				}
 			}
 		});
@@ -175,7 +154,7 @@ public class Network implements INetworkSubject{
 	private int initAddresses(){
 
 		try {
-
+			System.out.println("Listing Network addresses untill finding a suitable one");
 			Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
 			for (NetworkInterface netint : Collections.list(nets)) {
 
@@ -185,7 +164,7 @@ public class Network implements INetworkSubject{
 				}
 				Enumeration<InetAddress> inetenum =  netint.getInetAddresses();
 				for(InetAddress addr : Collections.list( inetenum)){
-					//System.out.println(addr.);
+
 					if(addr.isAnyLocalAddress() || addr.isLoopbackAddress() || addr.isLinkLocalAddress() ||addr.isAnyLocalAddress() ){
 						continue;
 					}
@@ -194,13 +173,13 @@ public class Network implements INetworkSubject{
 
 						if(addr.getHostAddress().matches("192.168.56*") || addr.getHostAddress().length() > 12){
 
-							System.out.println("Raté");
+							//System.out.println("Raté");
 						}
 						else {
 
+							System.out.println("Local Address : " + addr.toString());
+							System.out.println("Broadcast Address : "   + netint.getInterfaceAddresses().get(0).getBroadcast().toString()); //TODO Réparer
 
-							System.out.println("Addr broadcast : "   + netint.getInterfaceAddresses().get(0).getBroadcast().toString()); //TODO Réparer
-							System.out.println("Addr locale : " + addr.toString());
 							broadcastAddress = new Address (netint.getInterfaceAddresses().get(0).getBroadcast(), port );
 							localAddress = new Address(addr, port);
 							return 1;
@@ -233,29 +212,9 @@ public class Network implements INetworkSubject{
 	}
 
 	public Address getBroadcastAddress(){
-		/*InetAddress broadcastIpAddress = null;
 
-		broadcastIpAddress = getLocalAddress().getIpAdress();
-		getLocalAddress();
-
-		System.out.println("local address " + broadcastIpAddress.getHostAddress());
-		Address addr =null;
-		try {
-			addr = new Address(InetAddress.getByAddress(new byte[]{(byte) 255,(byte) 255,(byte) 255,(byte) 255}), port);
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		System.out.println("Generated Broadcast Address : " + addr.getIpAdress().getHostAddress());
-		*/
 		return broadcastAddress;
 
-
-
-
 	}
-	
-	
 	
 }

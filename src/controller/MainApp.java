@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
@@ -169,6 +170,13 @@ public class MainApp extends Application {
 			Scene scene = new Scene(rootLayout);
 			primaryStage.setScene(scene);
 			primaryStage.show();
+
+			primaryStage.setOnCloseRequest(e->{
+				Platform.exit();
+				Model.getInstance().logOut();
+				System.out.println("Terminating ...");
+				System.exit(1);
+			});
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -238,7 +246,7 @@ public class MainApp extends Application {
 			ConversationOverviewController controller = loader.getController();
 			controller.setMainApp(this);
 			//controller.setConversation(simpleConversations.get(0));
-			controller.getPreviousMessages().appendText(controller.getConversation().toString());
+			//controller.getPreviousMessages().appendText(controller.getConversation().toString()); //C'est dégueu
 			
 		
 		} catch (IOException e) {
@@ -260,7 +268,7 @@ public class MainApp extends Application {
 			ConversationOverviewController controller = loader.getController();
 			controller.setMainApp(this);
 			controller.setConversation(Model.getInstance().getSimpleConversations().get(userName_address));
-			controller.getPreviousMessages().appendText(controller.getConversation().toString());
+			//controller.getPreviousMessages().appendText(controller.getConversation().toString());
 			
 		
 		} catch (IOException e) {

@@ -52,7 +52,7 @@ public class LoginWindowController {
 
 	private void tryLogIn(){
 		if(userNameTextField.getText().trim().isEmpty()){
-			//System.out.println("Veuillez rentrer un nom d'utilisateur valide svp !");
+
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Username Error");
 			alert.setHeaderText("Please enter a valid Username");
@@ -63,7 +63,7 @@ public class LoginWindowController {
 			});
 		}else{
 			logInButton.setText("yoyo");
-			System.out.println("Vous �tes bien enregistr� sous l'utilisateur : " + userNameTextField.getText());
+			System.out.println("Connected as : " + userNameTextField.getText());
 
 			Model.getInstance().logIn(userNameTextField.getText());
 
