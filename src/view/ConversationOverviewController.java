@@ -5,7 +5,9 @@ import controller.MainApp;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import message.Message;
@@ -135,8 +137,30 @@ public class ConversationOverviewController implements IConversationObserver {
 			//System.out.println("Sending TextMessage");
 
 			Message msg = MsgFactory.createMessage(model.getLocalUser(), ((SimpleConversation) conversation).getReceiver(), textToSend.getText()); //TODO c'est limite
-			mainApp.net.sendMessage(msg);
-			conversation.addMessage((MsgText) msg); //TODO à changer
+			//mainApp.net.sendMessage(msg);
+			mainApp.net.sendMessageACK(msg, result -> {
+				if(result == 1){
+					conversation.addMessage((MsgText) msg); //TODO à changer
+				}
+				else {
+					/*Platform.runLater(() -> {
+						Alert alert = new Alert(Alert.AlertType.ERROR);
+						alert.setTitle("Communication error");
+						alert.setHeaderText("No ack :'(");
+						alert.showAndWait().ifPresent(rs -> {
+							if (rs == ButtonType.OK) {
+								System.out.println("Pressed OK.");
+							}
+						});
+					});*/
+
+					Platform.runLater(() -> {previousMessages.appendText("NOT DELIVERED");});
+				}
+				return 1;});
+
+
+
+
 			//previousMessages.appendText("\n" + textToSend.getText());
 
 			//System.out.println("Conv : ");

@@ -1,6 +1,7 @@
 package controller;
 
 import com.sun.org.apache.xpath.internal.operations.Mod;
+import com.sun.xml.internal.bind.v2.runtime.property.StructureLoaderBuilder;
 import javafx.application.Platform;
 import message.*;
 import model.Address;
@@ -9,6 +10,10 @@ import model.User;
 import network.Network;
 
 import javax.jws.WebParam;
+import java.util.HashMap;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 /**
  * Interracts with the network in order to send and receive messages.
@@ -22,11 +27,13 @@ public class NetworkHandler implements INetworkObserver{
 	Network net;
 
 	boolean seeLocalUser = true;
-	
+
+	private ConcurrentHashMap<Integer, Boolean> waitingForAck; // contains messages that wait ACK
 	
 	public NetworkHandler(Network net) {
 		this.net = net;
 		this.net.register(this); //Registering to the network
+		this.waitingForAck = new ConcurrentHashMap<>();
 	}
 	
 	
@@ -100,6 +107,11 @@ public class NetworkHandler implements INetworkObserver{
 
 			else if (mesg instanceof MsgAck){
 				System.out.println("Received ACK for message #" + ((MsgAck)mesg).getNumMessage());
+				//waitingForAck.get(mesg.getNumMessage()) = false;
+				//
+				if(waitingForAck.get(mesg.getNumMessage())!=null){
+					waitingForAck.put(mesg.getNumMessage(), true); // ACK has been received
+				}
 			}
 
 		}
@@ -114,6 +126,58 @@ public class NetworkHandler implements INetworkObserver{
 		System.out.println("message #" + message.getNumMessage());
 
 		net.sendMessage(message);
+		return 0;
+	}
+
+	public int sendMessageACK(Message message,Function<Integer, Integer> f){
+		waitingForAck.put(message.getNumMessage(), false);
+
+		System.out.println();
+		System.out.println("Sending message of type " + message.getClass().toString());
+		System.out.println("Src : "+ message.getSourceUserName() + " @" + message.getSourceAddress());
+		System.out.println("Dest : @" + message.getDestinationAddress());
+		System.out.println("message #" + message.getNumMessage());
+
+		Thread t = new Thread(()->{
+
+
+			System.out.println("Waiting for ACK");
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			for(int i =0; i<3; ++i) {
+
+				if(waitingForAck.get(message.getNumMessage())){
+					System.out.println("Ack received ("+i+" tries)");
+					f.apply(1);
+					return;
+				}
+				else{
+					System.out.println("no ack ("+i+" tries)");
+				}
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+			}
+			System.out.println("I AM ERROR");
+			try {
+				f.apply(-1);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+
+		});
+		t.start();
+		net.sendMessage(message);
+
+
+
 		return 0;
 	}
 }
