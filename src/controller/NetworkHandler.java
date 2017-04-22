@@ -7,6 +7,7 @@ import message.*;
 import model.Address;
 import model.Model;
 import model.User;
+import model.UserList;
 import network.Network;
 
 import javax.jws.WebParam;
@@ -71,7 +72,7 @@ public class NetworkHandler implements INetworkObserver{
 				}else{
 					System.out.println("Hello :) Adding to the UserList");
 
-					Model.getInstance().addUser(usr, true);
+					UserList.getInstance().addUser(usr);
 
 					System.out.println("Replying");
 					Message replymesg = MsgFactory.createReplyPresence(Model.getInstance().getLocalUser(), usr);
@@ -89,13 +90,13 @@ public class NetworkHandler implements INetworkObserver{
 				}else{
 					System.out.println("Someone replied :) Adding to the UserList");
 
-					Model.getInstance().addUser(usr, true);
+					UserList.getInstance().addUser(usr);
 				}
 
 			}
 			else if (mesg instanceof MsgBye) {
 				System.out.println("The user has left");
-				Model.getInstance().updateUserStatus(Model.getInstance().getUser(mesg.getSourceUserName() + "_" + mesg.getSourceAddress() + ":" + mesg.getDestinationPort()), false);
+				UserList.getInstance().updateUserStatus(UserList.getInstance().getUser(User.fullUserName(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(),mesg.getSourcePort()))), false);
 			}
 
 
@@ -129,7 +130,19 @@ public class NetworkHandler implements INetworkObserver{
 		return 0;
 	}
 
+	/**
+	 * Sends a message expecting an acknowledgment
+	 *
+	 *
+	 * @param message
+	 * @param f callback function that is called. Calls with the argument 1 if ACK is received, -1 if it is not received
+	 * @return
+	 */
+
 	public int sendMessageACK(Message message,Function<Integer, Integer> f){
+
+		// Puts the message number in the hashmap
+		// it is updated when an acknowledgement is received
 		waitingForAck.put(message.getNumMessage(), false);
 
 		System.out.println();
@@ -139,23 +152,21 @@ public class NetworkHandler implements INetworkObserver{
 		System.out.println("message #" + message.getNumMessage());
 
 		Thread t = new Thread(()->{
-
-
 			System.out.println("Waiting for ACK");
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			for(int i =0; i<3; ++i) {
+			for(int i =1; i<4; ++i) {
 
 				if(waitingForAck.get(message.getNumMessage())){
-					System.out.println("Ack received ("+i+" tries)");
+					System.out.println("Ack received ("+i+" attempt(s))");
 					f.apply(1);
 					return;
 				}
 				else{
-					System.out.println("no ack ("+i+" tries)");
+					System.out.println("no ack ("+i+" attempt(s))");
 				}
 				try {
 					Thread.sleep(1000);

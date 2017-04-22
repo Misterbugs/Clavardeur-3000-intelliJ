@@ -2,16 +2,15 @@ package view;
 
 import com.sun.org.apache.xpath.internal.operations.Mod;
 import controller.MainApp;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import model.Model;
-import model.SimpleConversation;
-import model.User;
- 
-public class UserOverviewController {
+import model.*;
+
+public class UserOverviewController implements IUserListObserver{
 
 	//@FXML
 	//ObservableList<User> data = FXCollections.observableArrayList();
@@ -39,7 +38,9 @@ public class UserOverviewController {
 	 */
 	@FXML
 	private void initialize(){
-		
+
+		UserList.getInstance().register(this);
+
 		userTable.setCellFactory(tc -> {
 			ListCell<User> cell = new ListCell<User>(){
 				@Override
@@ -61,7 +62,7 @@ public class UserOverviewController {
 					User receiver = cell.getItem();
 					//Prepares the conversation id
 					String conversationId = new String(receiver.getFullUserName());
-					System.out.println(conversationId);
+					System.out.println("Opening conversation wirh : " + conversationId);
 					
 					//Check for the conversation existence
 					if(Model.getInstance().getSimpleConversations().containsKey(conversationId)){
@@ -82,7 +83,7 @@ public class UserOverviewController {
 			return cell;
 		});
 		
-		
+
 	}
 	
 	
@@ -90,12 +91,18 @@ public class UserOverviewController {
 		this.mainApp = mainApp;
 		//data = mainApp.getUserData();
 		//userTable.setItems(this.mainApp.getUserData());
-		userTable.setItems(Model.getInstance().getKnownUsers());
+		//userTable.getItems()
 		
 		
 		
 	}
-	
-	
-	
+
+	public void refresh(){
+		userTable.refresh();
+	}
+
+	@Override
+	public void update(User usr) {
+		Platform.runLater(() ->{System.out.println("User Overview Updated !");});
+	}
 }
