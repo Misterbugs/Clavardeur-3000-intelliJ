@@ -71,8 +71,8 @@ public class UserList implements IUserListSubject{
      * @return 1 if the User has been successfully added | -1 if it was already known by the system
      */
     public int addUser(User usr){
-
-        if(getUser(usr.getFullUserName()) == null){
+        User storedUser = getUser(usr.getFullUserName());
+        if( storedUser == null){
             System.out.println("Adding " + usr.getFullUserName() + " to known users !");
 
             //Somehow this works.... Or does it?
@@ -90,6 +90,7 @@ public class UserList implements IUserListSubject{
             return 1;
         }
         else{
+            updateUserStatus(storedUser, true);
             System.out.println("The user " + usr.getUserName().get() + " is already known !");
         }
         return -1;
@@ -105,7 +106,7 @@ public class UserList implements IUserListSubject{
         if(getUser(usr.getFullUserName()) != null){
             System.out.println("Updating " + usr.getUserNameString() + " status. isConnected = " +isConnected);
             getUser(usr.getFullUserName()).setIsConnected(isConnected);
-
+            notifyObserver(usr);
             return 1;
         }
         else{

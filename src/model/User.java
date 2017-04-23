@@ -110,4 +110,8 @@ public class User implements Serializable{
 		else return false;
 	}
 
+
+	public boolean equals(User usr) {
+		return usr.getFullUserName().equals(this.getFullUserName());
+	}
 }

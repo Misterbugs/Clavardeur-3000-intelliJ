@@ -4,16 +4,26 @@ import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import controller.MainApp;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import message.Message;
+import message.MsgAskFile;
 import message.MsgFactory;
 import message.MsgText;
 import model.*;
 
-public class ConversationOverviewController implements IConversationObserver {
+import java.io.File;
 
+public class ConversationOverviewController implements IConversationObserver {
+	@FXML
+	private FileChooser fileChooser;
+
+	@FXML
+	private Button fileButton;
 
 	@FXML
 	private Label labelDestName;
@@ -50,6 +60,20 @@ public class ConversationOverviewController implements IConversationObserver {
 	private void initialize() {
 
 		model = Model.getInstance();
+
+		fileChooser = new FileChooser();
+
+		fileButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				File file = fileChooser.showOpenDialog(new Stage());
+				if(file != null){
+					Message msg;
+					msg = MsgFactory.createFileAskMessage(model.getLocalUser(), ((SimpleConversation) conversation).getReceiver(), file.getName(), file.length(), 987);
+					mainApp.net.sendMessage(msg);
+				}
+			}
+		});
 
 		//Lambda to make the enter key send message
 		textToSend.setOnKeyPressed((event) -> {
@@ -133,6 +157,11 @@ public class ConversationOverviewController implements IConversationObserver {
 	}
 
 
+	public void handleSendFileButton(){
+
+		System.out.println("sending file!");
+	}
+
 	private void sendText() {
 		//Send text if the text area is not empty
 		if (!(textToSend.getText().equals(""))) {
@@ -176,7 +205,40 @@ public class ConversationOverviewController implements IConversationObserver {
 	public void update(Message mesg) {
 		//synchronized (this) {
 			//System.out.println("New message update !");
+
+		if(mesg instanceof MsgText){
 			appendMessage(mesg);
+		}
+		else if(mesg instanceof MsgAskFile){
+
+			Platform.runLater(() -> {
+						MsgAskFile filemesg = (MsgAskFile) mesg;
+						Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+						alert.setTitle(filemesg.getSourceUserName() + " wants to send you a file");
+						alert.setContentText("Filename : \""+ filemesg.getFilename()+"\"" + System.lineSeparator() +
+								"Size : " + filemesg.getSize()/ 1024 + "Ko" + System.lineSeparator() +
+								"Port : "+ filemesg.getSendingTCPPort()
+								+ System.lineSeparator() + "Do you want to download it?"
+						);
+						ButtonType okButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+						ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.NO);
+
+						alert.getButtonTypes().setAll(okButton, noButton);
+						alert.showAndWait().ifPresent(type -> {
+							if (type == ButtonType.OK) {
+
+							} else{
+
+							}
+						});
+					}
+			);
+
+		}
+		else {
+			System.out.println("ConversationController : Unhandled message type");
+		}
+
 
 	}
 

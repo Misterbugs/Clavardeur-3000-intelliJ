@@ -114,6 +114,14 @@ public class NetworkHandler implements INetworkObserver{
 					waitingForAck.put(mesg.getNumMessage(), true); // ACK has been received
 				}
 			}
+			else if(mesg instanceof MsgAskFile){
+				MsgAskFile msgAskFile = (MsgAskFile)mesg;
+				User usr = new User(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()), true);
+
+				Model.getInstance().getConversation(usr.getFullUserName()).notifyObserver(msgAskFile);
+
+				System.out.println("Filename : \""+ msgAskFile.getFilename()+"\", Size : " + msgAskFile.getSize()/ 1024 + "Ko port : "+ msgAskFile.getSendingTCPPort());
+			}
 
 		}
 	}

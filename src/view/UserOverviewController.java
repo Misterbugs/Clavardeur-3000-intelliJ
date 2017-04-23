@@ -82,6 +82,8 @@ public class UserOverviewController implements IUserListObserver{
 			});
 			return cell;
 		});
+
+		userTable.getItems().addAll(UserList.getInstance().getKnownUsers());
 		
 
 	}
@@ -103,6 +105,24 @@ public class UserOverviewController implements IUserListObserver{
 
 	@Override
 	public void update(User usr) {
-		Platform.runLater(() ->{System.out.println("User Overview Updated !");});
+		Platform.runLater(() ->{
+			System.out.println("User Overview Updated !");
+			boolean found = false;
+			for(User u : userTable.getItems()){
+				if(u.equals(usr)){
+					userTable.refresh();
+					found = true;
+					break;
+				}
+			}
+
+			if(!found){
+				userTable.getItems().add(usr);
+			}
+
+
+		});
+
+
 	}
 }

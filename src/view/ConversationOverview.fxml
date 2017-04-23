@@ -27,5 +27,6 @@
             <Image url="@../../../../Pictures/Lamas/1588183-sipa-00686196-000001.jpg" />
          </image>
       </ImageView>
+      <Button fx:id="fileButton" layoutX="529.0" layoutY="397.0" mnemonicParsing="false" text="Send File" />
    </children>
 </AnchorPane>

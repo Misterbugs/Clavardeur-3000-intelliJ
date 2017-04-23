@@ -35,4 +35,9 @@ public final class MsgFactory {
 				Model.getInstance().getLocalUser().getUserNameString(), originalMessage.getSourceAddress(), originalMessage.getSourcePort(), originalMessage.getNumMessage());
 	 }
 
+	 public static Message createFileAskMessage(User sourceUsr, User destUsr, String fileName, long size, int sendingPort){
+		 return new MsgAskFile(sourceUsr.getAddress().getIpAdress(), sourceUsr.getAddress().getPort(), sourceUsr.getUserName().get(),
+				 destUsr.getAddress().getIpAdress(), sourceUsr.getAddress().getPort(), messageNumber++, fileName, size, sendingPort);
+	 }
+
 }
