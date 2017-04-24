@@ -31,7 +31,11 @@ public class MainApp extends Application {
 
 	private Stage primaryStage;
 	private BorderPane rootLayout;
-	
+
+	public NetworkHandler getNet() {
+		return net;
+	}
+
 	/**
 	 * An easy way t
 	private ObservableMap<String, User> userData;o store and find users
@@ -42,55 +46,13 @@ public class MainApp extends Application {
 	//private ObservableMap<String, SimpleConversation> simpleConversations=FXCollections.observableHashMap();
 	//private ArrayList<Conversation> serializableConversations = new ArrayList<Conversation>();
 	
-	public NetworkHandler net; //TODO c'est dégueu
+	private NetworkHandler net; //TODO c'est dégueu
 	
 	public MainApp(){
 		
-		//Adding some conversations
-		
 		net = new NetworkHandler( Network.getInstance());
-		
-		//userData = Model.getInstance().getKnownUsers();
-		
-		//T
-		
-		//Fin test
-		
-		//InetAddress iAdd;
-		/*
-		try {
-			iAdd = InetAddress.getLocalHost();
-			Address add1 = new Address(iAdd, 8080);
-			Address add2 = new Address(iAdd, 8080);
-			Address add3 = new Address(iAdd, 8080);
-			Address add4 = new Address(iAdd, 8080);
-			//Some sample data
-			userData.put("Flo", new User("Flo", add1, true));
-			userData.put("Romain", new User("Romain", add2, true));
-			userData.put("John", new User("John", add3, true));
-			userData.put("Jane", new User("Jane", add4, true));
-			
-			//A sample SimpleConversation with Romain
-			SimpleConversation conv1 = new SimpleConversation(new User("Romain", add2, true));
-			MsgText mess1 = new MsgText(iAdd, 8080, "Flo", iAdd, 8080, 1, "Eh coucou !");
-			//System.out.println(mess1.toString());
-			conv1.addMessage(mess1);
-			//System.out.println(conv1.toString());
-			//serializableConversations.add(conv1);
-			//conversations =FXCollections.observableArrayList(serializableConversations);
-			
-			simpleConversations.put(conv1.getId(), conv1);
-			
 
-			System.out.println(conv1.getId());
-			
-			
-		
-		} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-		}
-		*/
+
 		//Serialization xml
 		/**
 		 * Here, we just serialize the text from MsgText objects... Is it sufficient ? ... Maybe not...
@@ -107,7 +69,7 @@ public class MainApp extends Application {
 //			}
 //			*/
 //			encoder.flush();
-//			
+//
 //		}catch(IOException e){
 //			e.printStackTrace();
 //		}finally{
@@ -125,25 +87,15 @@ public class MainApp extends Application {
 		}catch(final IOException e){
 			e.printStackTrace();
 		}*/
-		
-		
-		
+
+
+
 	}
 	
 	
 	
 
-	
-	//En commentaires pour la gloire !
-//	public ObservableList<User> getUserDataList(){
-//		ObservableList<User> users = FXCollections.observableArrayList();
-//		for(User usr : userData.values()){
-//			users.add(usr);
-//		}
-//		
-//		return users;
-//	}
-	
+
 	
 	@Override
 	public void start(Stage primaryStage) {
