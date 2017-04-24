@@ -35,6 +35,8 @@ public class NetworkHandler implements INetworkObserver{
 		this.net = net;
 		this.net.register(this); //Registering to the network
 		this.waitingForAck = new ConcurrentHashMap<>();
+
+
 	}
 	
 	

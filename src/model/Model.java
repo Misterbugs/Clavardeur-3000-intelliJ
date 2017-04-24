@@ -100,7 +100,20 @@ public class Model {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		Network.getInstance().sendMessage(MsgFactory.createHelloMessage(localUser, Network.getInstance().getBroadcastAddress()));
+
+		Thread threadHello = new Thread(()->{
+			while(true){
+				Network.getInstance().sendMessage(MsgFactory.createHelloMessage(localUser, Network.getInstance().getBroadcastAddress()));
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+		});
+		threadHello.start();
+
 		return 1;
 	}
 
