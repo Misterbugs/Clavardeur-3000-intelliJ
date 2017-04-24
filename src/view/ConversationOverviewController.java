@@ -68,7 +68,7 @@ public class ConversationOverviewController implements IConversationObserver {
 				if(file != null){
 					Message msg;
 					msg = MsgFactory.createFileAskMessage(model.getLocalUser(), ((SimpleConversation) conversation).getReceiver(), file.getName(), file.length(), 987);
-					mainApp.net.sendMessage(msg);
+					mainApp.getNet().sendMessage(msg);
 				}
 			}
 		);
@@ -167,7 +167,7 @@ public class ConversationOverviewController implements IConversationObserver {
 
 			Message msg = MsgFactory.createMessage(model.getLocalUser(), ((SimpleConversation) conversation).getReceiver(), textToSend.getText());
 			//mainApp.net.sendMessage(msg);
-			mainApp.net.sendMessageACK(msg, result -> {
+			mainApp.getNet().sendMessageACK(msg, result -> {
 				if(result == 1){
 					conversation.addMessage((MsgText) msg);
 				}
@@ -187,15 +187,8 @@ public class ConversationOverviewController implements IConversationObserver {
 				}
 				return 1;});
 
-
-
-
-			//previousMessages.appendText("\n" + textToSend.getText());
-
-			//System.out.println("Conv : ");
-			//System.out.println(conversation.toString());
 			textToSend.clear();
-			//textToSend.end();
+
 		}
 	}
 

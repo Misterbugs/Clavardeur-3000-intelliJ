@@ -35,8 +35,6 @@ public class NetworkHandler implements INetworkObserver{
 		this.net = net;
 		this.net.register(this); //Registering to the network
 		this.waitingForAck = new ConcurrentHashMap<>();
-
-
 	}
 	
 	
@@ -70,6 +68,7 @@ public class NetworkHandler implements INetworkObserver{
 				User usr = new User(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()), true);
 
 				if(usr.getFullUserName().equals( Model.getInstance().getLocalUser().getFullUserName())  && !seeLocalUser){
+				    //if it is our own hello mesage.
 					System.out.println("Received our own hello message => IGNORED");
 				}else{
 					System.out.println("Hello :) Adding to the UserList");
@@ -88,10 +87,10 @@ public class NetworkHandler implements INetworkObserver{
 				User usr = new User(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()), true);
 
 				if(usr.getFullUserName().equals( Model.getInstance().getLocalUser().getFullUserName())){
+				    // if it is our own own presence message we ignore it.
 					System.out.println("Received our own ReplyPresence message => IGNORED ");
 				}else{
 					System.out.println("Someone replied :) Adding to the UserList");
-
 					UserList.getInstance().addUser(usr);
 				}
 
@@ -196,9 +195,6 @@ public class NetworkHandler implements INetworkObserver{
 		});
 		t.start();
 		net.sendMessage(message);
-
-
-
 		return 0;
 	}
 }
