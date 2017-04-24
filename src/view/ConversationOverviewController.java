@@ -245,13 +245,24 @@ public class ConversationOverviewController implements IConversationObserver {
 		String fullUserName = User.fullUserName(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()));
 			if(fullUserName.equals(model.getLocalUser().getFullUserName())){
 				previousMessages.appendText("You : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
+
+				Thread t = new Thread(() -> {
+					Media sound = new Media(this.getClass().getResource("/ah.wav").toString());
+					MediaPlayer mediaPlayer = new MediaPlayer(sound);
+					mediaPlayer.play();
+				});
+
+				t.start();
+
+
+
 			}else{
 				previousMessages.appendText(mesg.getSourceUserName() + " : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
-
-				//sString musicFile = "../ah.wav";
-				//Media sound = new Media(new File(musicFile).toURI().toString());
-				//MediaPlayer mediaPlayer = new MediaPlayer(sound);
-				//mediaPlayer.play();
+				System.out.println("AH___________________________________________________");
+				String musicFile = "../ah.wav";
+				Media sound = new Media(new File(musicFile).toURI().toString());
+				MediaPlayer mediaPlayer = new MediaPlayer(sound);
+				mediaPlayer.play();
 
 			}
 		});
