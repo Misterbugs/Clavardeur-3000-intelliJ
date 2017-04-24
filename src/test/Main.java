@@ -1,14 +1,11 @@
-package tests;
+package test;
 
-import java.awt.SecondaryLoop;
 import java.net.InetAddress;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import controller.NetworkHandler;
 import message.Message;
 import message.MsgFactory;
-import message.MsgText;
 import model.Address;
 import model.User;
 import network.Network;
