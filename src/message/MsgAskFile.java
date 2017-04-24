@@ -29,14 +29,14 @@ public class MsgAskFile extends Message {
      * @param numMessage
      */
 
-    String filename;
-    long size;
-    int sendingTCPPort;
+    private String filename;
+    private long size;
+    private int sendingTCPPort;
 
 
     public MsgAskFile(InetAddress sourceAddress, int sourcePort, String sourceUserName, InetAddress destinationAddress, int destinationPort, int numMessage, String fileName, long size, int sendingTCPPort) {
         super(sourceAddress, sourcePort, sourceUserName, destinationAddress, destinationPort, numMessage);
-        this.filename =fileName;
+        this.filename = fileName;
         this.size = size;
         this.sendingTCPPort=sendingTCPPort;
     }

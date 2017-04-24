@@ -63,9 +63,7 @@ public class ConversationOverviewController implements IConversationObserver {
 
 		fileChooser = new FileChooser();
 
-		fileButton.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
+		fileButton.setOnAction((event) -> {
 				File file = fileChooser.showOpenDialog(new Stage());
 				if(file != null){
 					Message msg;
@@ -73,7 +71,7 @@ public class ConversationOverviewController implements IConversationObserver {
 					mainApp.net.sendMessage(msg);
 				}
 			}
-		});
+		);
 
 		//Lambda to make the enter key send message
 		textToSend.setOnKeyPressed((event) -> {
@@ -167,11 +165,11 @@ public class ConversationOverviewController implements IConversationObserver {
 		if (!(textToSend.getText().equals(""))) {
 			//System.out.println("Sending TextMessage");
 
-			Message msg = MsgFactory.createMessage(model.getLocalUser(), ((SimpleConversation) conversation).getReceiver(), textToSend.getText()); //TODO c'est limite
+			Message msg = MsgFactory.createMessage(model.getLocalUser(), ((SimpleConversation) conversation).getReceiver(), textToSend.getText());
 			//mainApp.net.sendMessage(msg);
 			mainApp.net.sendMessageACK(msg, result -> {
 				if(result == 1){
-					conversation.addMessage((MsgText) msg); //TODO à changer
+					conversation.addMessage((MsgText) msg);
 				}
 				else {
 					Platform.runLater(() -> {

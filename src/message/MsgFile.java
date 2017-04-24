@@ -23,9 +23,8 @@ public class MsgFile extends Message{
 	/**
 	 * The size of the file
 	 */
-	private float fileSize;
-	
-	
+
+
 	/**
 	 * A beautiful constructor using the fileName
 	 * @param sourceAddress
@@ -72,14 +71,6 @@ public class MsgFile extends Message{
 		this.theFile = theFile;
 	}
 
-	public float getFileSize() {
-		return fileSize;
-	}
-
-	public void setFileSize(float fileSize) {
-		this.fileSize = fileSize;
-	}
-	
 	
 
 }

@@ -19,9 +19,9 @@ import model.Address;
 public class Network implements INetworkSubject{
 
 	
-	DatagramSocket sock;
-	int port = 2048; //default value
-	InetAddress IPAddress;
+	private DatagramSocket sock;
+	private int port = 2048; //default value
+	private InetAddress IPAddress;
 
 	private Address localAddress;
 	private Address broadcastAddress;
@@ -171,7 +171,7 @@ public class Network implements INetworkSubject{
 					else{
 						System.out.println(addr.getHostAddress());
 
-						if(addr.getHostAddress().matches("192.168.56*") || addr.getHostAddress().length() > 12){
+						if(addr.getHostAddress().contains("192.168.56") || addr.getHostAddress().length() > 15){
 
 							//System.out.println("Raté");
 						}

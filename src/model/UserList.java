@@ -103,16 +103,18 @@ public class UserList implements IUserListSubject{
      * @return 1 if it was successful| -1 if usr is not known
      */
     public int updateUserStatus(User usr, Boolean isConnected){
-        if(getUser(usr.getFullUserName()) != null){
-            System.out.println("Updating " + usr.getUserNameString() + " status. isConnected = " +isConnected);
-            getUser(usr.getFullUserName()).setIsConnected(isConnected);
-            notifyObserver(usr);
-            return 1;
-        }
-        else{
-            System.out.println("The user " + usr.getUserNameString() + " was not found !");
-        }
-        return -1;
+
+       if(usr!=null) {
+           if (getUser(usr.getFullUserName()) != null) {
+               System.out.println("Updating " + usr.getUserNameString() + " status. isConnected = " + isConnected);
+               getUser(usr.getFullUserName()).setIsConnected(isConnected);
+               notifyObserver(usr);
+               return 1;
+           } else {
+               System.out.println("The user " + usr.getUserNameString() + " was not found !");
+           }
+           return -1;
+       }else return -1;
     }
 
     /**
