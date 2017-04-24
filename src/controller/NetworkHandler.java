@@ -176,6 +176,7 @@ public class NetworkHandler implements INetworkObserver{
 				}
 				else{
 					System.out.println("no ack ("+i+" attempt(s))");
+					sendMessage(message);
 				}
 				try {
 					Thread.sleep(1000);
