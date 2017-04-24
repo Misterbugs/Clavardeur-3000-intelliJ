@@ -4,7 +4,7 @@
 
 
 ***********************************
-*********** Local tests ***********
+*********** Local test ***********
 ***********************************
 --- UserConnexion   : Testing the local connexion and the addition of a user to the user list
 --- Messages        :
@@ -12,7 +12,7 @@
 
 
 **************************************
-*********** Local tests **************
+*********** Local test **************
 **************************************
 
 --- Parrot     : Sending Messages to ourselves
