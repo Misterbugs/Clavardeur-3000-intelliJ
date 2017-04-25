@@ -1,5 +1,6 @@
 package test;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -7,14 +8,17 @@ import controller.NetworkHandler;
 import message.Message;
 import message.MsgFactory;
 import model.Address;
+import model.Model;
 import model.User;
 import network.Network;
+import network.NetworkTCPClient;
+import network.NetworkTCPServer;
 
 
 public class Main {
 
 	public static void main(String[] args) {
-		Network net = Network.getInstance();
+		/*Network net = Network.getInstance();
 		
 		
 		Address broadcastAddr = net.getBroadcastAddress();
@@ -60,7 +64,46 @@ public class Main {
 			e.printStackTrace();
 		}
 		Message me = MsgFactory.createByeMessage(localUsr, broadcastAddr);
-		net.sendMessage(me);
+		net.sendMessage(me);*/
+
+		Network net = Network.getInstance();
+		Model mod = Model.getInstance();
+		Model.getInstance().createLocalUser("Toto");
+
+
+		Thread tServer = new Thread(()->{
+			try {
+				NetworkTCPServer tcpServ = new NetworkTCPServer(2049);
+				System.out.println("Hello?");
+				tcpServ.receiveMessage();
+				tcpServ.killSocket();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		});
+
+		Thread tClient = new Thread (()->{
+			NetworkTCPClient tcpClient = new NetworkTCPClient(net.getLocalAddress());
+			tcpClient.sendMessage(MsgFactory.createMessage(mod.getLocalUser(), mod.getLocalUser(),"Test TCP"));
+			try {
+				tcpClient.killSocket();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		});
+
+		tServer.start();
+
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		tClient.start();
+
 
 	}
 

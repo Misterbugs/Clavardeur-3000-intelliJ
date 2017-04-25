@@ -66,7 +66,9 @@ public class Network implements INetworkSubject{
 		try {
 			sock = new DatagramSocket(port);
 		} catch (SocketException e1) {
-			// TODO Auto-generated catch block
+			System.out.println("Canno't bind : port "+port+" already taken.");
+			System.out.println("Exiting...");
+			System.exit(-1);
 			e1.printStackTrace();
 		}  
 		
@@ -78,7 +80,7 @@ public class Network implements INetworkSubject{
 				ByteArrayInputStream bis = new ByteArrayInputStream(receiveData);
 				ObjectInput in = null;
 
-				System.out.println("Socket Started !");
+				System.out.println("UDP Socket Started !");
 				while(true){
 
 					DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
@@ -127,26 +129,38 @@ public class Network implements INetworkSubject{
 	
 	
 	public void sendMessage(Message message){
-		//InetAddress a = null;
-		//a = InetAddress.getByName("localhost");
-		//MsgText theMsgText = new MsgText(a, 2048, a, 2048, 0, "This is a text message");	
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		
-		ObjectOutputStream o = null;
+
 		try {
-			o = new ObjectOutputStream(bos);
-			o.writeObject(message);
-			o.flush();
-			o.close();
-			byte[] b = bos.toByteArray();
-			//System.out.println(b.toString());
+
+			byte[] b = serializeMessage(message);
 			sock.send(new DatagramPacket(b, b.length, message.getDestinationAddress(), message.getDestinationPort()));
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		};
+		}
 	
+	}
+
+	public byte[] serializeMessage(Message message){
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+		ObjectOutputStream o = null;
+		byte[] b = null;
+		try {
+			o = new ObjectOutputStream(bos);
+			o.writeObject(message);
+			o.flush();
+			o.close();
+			b = bos.toByteArray();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return b;
+
+
 	}
 
 
@@ -212,9 +226,7 @@ public class Network implements INetworkSubject{
 	}
 
 	public Address getBroadcastAddress(){
-
 		return broadcastAddress;
-
 	}
 	
 }
