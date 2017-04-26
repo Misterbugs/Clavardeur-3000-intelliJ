@@ -3,6 +3,7 @@ package model;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import message.Message;
 
 import java.util.ArrayList;
 
@@ -153,6 +154,14 @@ public class UserList implements IUserListSubject{
         }
         System.out.println(fullUserName + " was not found in the userList");
         return null;
+    }
+
+
+    /**
+     * Gets a the source user of a message from the UserList
+     */
+    public User getSourceUser(Message mesg){
+        return getUser(User.fullUserName(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort())));
     }
 
     public ArrayList<User> getKnownUsers() {

@@ -68,9 +68,29 @@ public class ConversationOverviewController implements IConversationObserver {
 		fileButton.setOnAction((event) -> {
 				File file = fileChooser.showOpenDialog(new Stage());
 				if(file != null){
-					Message msg;
+
+
+					mainApp.getNet().sendAskFile(((SimpleConversation) conversation).getReceiver(), file, (callbackCode)->{
+						if(callbackCode==1){
+
+						}else {
+							Platform.runLater(() -> {
+								Alert alert = new Alert(Alert.AlertType.ERROR);
+								alert.setTitle("Couldn't send the file");
+								alert.setHeaderText("Another file waits to be sent and the user hasn't responded yet. ");
+								alert.showAndWait().ifPresent(rs -> {
+									if (rs == ButtonType.OK) {
+										//System.out.println("Pressed OK.");
+									}
+								});
+							});
+
+						}
+
+					}); //TODO please respect Liskov
+					/*Message msg;
 					msg = MsgFactory.createFileAskMessage(model.getLocalUser(), ((SimpleConversation) conversation).getReceiver(), file.getName(), file.length(), 987);
-					mainApp.getNet().sendMessage(msg);
+					mainApp.getNet().sendMessage(msg);*/
 				}
 			}
 		);
@@ -187,7 +207,8 @@ public class ConversationOverviewController implements IConversationObserver {
 
 					Platform.runLater(() -> {previousMessages.appendText("NOT DELIVERED : " + ((MsgText) msg).getTextMessage() + " (no ACK from " + ((SimpleConversation) conversation).getReceiver().getUserNameString()+ ")") ;});
 				}
-				return 1;});
+
+			});
 
 			textToSend.clear();
 
@@ -218,12 +239,20 @@ public class ConversationOverviewController implements IConversationObserver {
 
 						alert.getButtonTypes().setAll(okButton, noButton);
 						alert.showAndWait().ifPresent(type -> {
-							if (type == ButtonType.OK) {
-
+							if (type == okButton) {
+								//
+								System.out.println("Accepting file");
+								mainApp.getNet().acceptFile(UserList.getInstance().getSourceUser(filemesg),filemesg.getFilename(),filemesg.getSize());
 							} else{
 
+								mainApp.getNet().declineFile(UserList.getInstance().getSourceUser(filemesg),filemesg.getFilename());
+								//mainApp.getNet().sendMessage(MsgFactory.createReplyFileMessage())
 							}
 						});
+
+
+
+
 					}
 			);
 

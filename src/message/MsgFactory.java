@@ -40,4 +40,10 @@ public final class MsgFactory {
 				 destUsr.getAddress().getIpAdress(), sourceUsr.getAddress().getPort(), messageNumber++, fileName, size, sendingPort);
 	 }
 
+	public static Message createReplyFileMessage(User sourceUsr, User destUsr, int receivingPort, boolean accepts){
+		return new MsgReplyFile(sourceUsr.getAddress().getIpAdress(), sourceUsr.getAddress().getPort(), sourceUsr.getUserName().get(),
+				destUsr.getAddress().getIpAdress(), sourceUsr.getAddress().getPort(), messageNumber++, receivingPort, accepts);
+	}
+
+
 }

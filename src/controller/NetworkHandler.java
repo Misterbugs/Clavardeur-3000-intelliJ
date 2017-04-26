@@ -11,6 +11,7 @@ import model.UserList;
 import network.Network;
 
 import javax.jws.WebParam;
+import java.io.File;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,11 +31,19 @@ public class NetworkHandler implements INetworkObserver{
 	boolean seeLocalUser = true;
 
 	private ConcurrentHashMap<Integer, Boolean> waitingForAck; // contains messages that wait ACK
+
+
+	/**
+	 * the files that wait for the authorisation from a distant user to be sent.
+	 * Only one file per distant user can wait to be sent.
+	 */
+	private HashMap<User, File> pendingUploads;
 	
 	public NetworkHandler(Network net) {
 		this.net = net;
 		this.net.register(this); //Registering to the network
 		this.waitingForAck = new ConcurrentHashMap<>();
+		this.pendingUploads = new HashMap<>();
 	}
 	
 	
@@ -122,6 +131,16 @@ public class NetworkHandler implements INetworkObserver{
 
 				System.out.println("Filename : \""+ msgAskFile.getFilename()+"\", Size : " + msgAskFile.getSize()/ 1024 + "Ko port : "+ msgAskFile.getSendingTCPPort());
 			}
+			else if (mesg instanceof MsgReplyFile){
+				MsgReplyFile msgReplyFile = (MsgReplyFile) mesg;
+				if(msgReplyFile.isAcceptsTranfer()){
+					System.out.println(msgReplyFile.getSourceUserName() + " accepted to receive our file");
+				}
+				else{
+					System.out.println(msgReplyFile.getSourceUserName() + " declined our file :'(");
+
+				}
+			}
 
 		}
 	}
@@ -147,7 +166,7 @@ public class NetworkHandler implements INetworkObserver{
 	 * @return
 	 */
 
-	public int sendMessageACK(Message message,Function<Integer, Integer> f){
+	public int sendMessageACK(Message message,CallbackFunction callbackFunction){
 
 		// Puts the message number in the hashmap
 		// it is updated when an acknowledgement is received
@@ -170,7 +189,7 @@ public class NetworkHandler implements INetworkObserver{
 
 				if(waitingForAck.get(message.getNumMessage())){
 					System.out.println("Ack received ("+i+" attempt(s))");
-					f.apply(1);
+					callbackFunction.call(1);
 					return;
 				}
 				else{
@@ -186,7 +205,7 @@ public class NetworkHandler implements INetworkObserver{
 			}
 			System.out.println("I AM ERROR");
 			try {
-				f.apply(-1);
+				callbackFunction.call(-1);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -197,4 +216,59 @@ public class NetworkHandler implements INetworkObserver{
 		net.sendMessage(message);
 		return 0;
 	}
+
+
+	/**
+	 *
+	 * @param distantUser
+	 * @param file
+	 * @param callbackFunction function called with argument 1 if the file was added to the pendingUploads
+	 *                         If there is already a file waiting the function is called with arg 0
+	 * @return
+	 */
+
+	public int sendAskFile(User distantUser, File file, CallbackFunction callbackFunction){
+		Message msg;
+		msg = MsgFactory.createFileAskMessage(Model.getInstance().getLocalUser(), distantUser, file.getName(), file.length(), 987);
+
+		boolean added = addToPendingUploads(distantUser, file);
+
+		if(added){
+			callbackFunction.call(1);
+			sendMessage(msg);
+			return 1;
+		}else{
+			callbackFunction.call(-1);
+			return 0;
+		}
+	}
+
+	/**
+	 * Adds a file to the hashmap to get track of which files still waits the authorization to be sent by the local user
+	 * @param distantUser
+	 * @param file
+	 * @return true if the file was added, false if another file is currently waiting
+	 */
+	private boolean addToPendingUploads(User distantUser,File file){
+		if(!pendingUploads.containsKey(distantUser)){
+			pendingUploads.put(distantUser, file);
+			return true;
+		}
+		else{
+			System.out.println("Can't add file to upload, a file is already waiting to be sent");
+			return false;
+		}
+	}
+
+	public void acceptFile(User distantUser, String filename, long size){
+		sendMessage(MsgFactory.createReplyFileMessage(Model.getInstance().getLocalUser(), distantUser, 2049, true));
+	}
+
+	public void declineFile(User distantUser, String filename){
+		sendMessage(MsgFactory.createReplyFileMessage(Model.getInstance().getLocalUser(), distantUser, -1, false));
+
+	}
+
+
+
 }

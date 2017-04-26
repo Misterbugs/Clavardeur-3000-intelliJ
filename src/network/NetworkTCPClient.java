@@ -19,7 +19,7 @@ public class NetworkTCPClient {
 
         try {
 
-            socket = new Socket(remoteAddress.getIpAdress(),2049);
+            socket = new Socket(remoteAddress.getIpAdress(),remoteAddress.getPort());
             System.out.println("Client TCP : Demande de connexion");
 
             /*in = new BufferedReader (new InputStreamReader(socket.getInputStream()));

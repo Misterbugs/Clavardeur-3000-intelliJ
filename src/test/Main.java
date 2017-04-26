@@ -84,7 +84,7 @@ public class Main {
 		});
 
 		Thread tClient = new Thread (()->{
-			NetworkTCPClient tcpClient = new NetworkTCPClient(net.getLocalAddress());
+			NetworkTCPClient tcpClient = new NetworkTCPClient(new Address(net.getLocalAddress().getIpAdress(), 2049));
 			tcpClient.sendMessage(MsgFactory.createMessage(mod.getLocalUser(), mod.getLocalUser(),"Test TCP"));
 			try {
 				tcpClient.killSocket();
