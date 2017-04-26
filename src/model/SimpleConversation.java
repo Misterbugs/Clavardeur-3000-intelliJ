@@ -19,7 +19,7 @@ public class SimpleConversation extends Conversation{
 	
 	public SimpleConversation(User receiver){
 		this.receiver = receiver;
-		this.id = new String(receiver.getUserName().getValueSafe() + "_" + receiver.getAddress().sysString());//.getIpAdress().toString());
+		this.id = new String(receiver.getUserName().getValueSafe() + "_" + receiver.getAddress().toString());//.getIpAdress().toString());
 	}
 
 	public String getId() {

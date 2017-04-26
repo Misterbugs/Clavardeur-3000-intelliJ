@@ -29,7 +29,7 @@ public class Address {
 	public Address(InetAddress ipAddress, int port){
 		this.ipAddress = ipAddress;
 		this.port = port;
-		this.stringPropertyAddress = new SimpleStringProperty(new String(this.sysString()));
+		this.stringPropertyAddress = new SimpleStringProperty(new String(this.toString()));
 		
 	}
 
@@ -61,8 +61,9 @@ public class Address {
 //	public String toString() {
 //		return "Address [ipAdress=" + ipAddress + ", port=" + port + "]";
 //	}
-	
-	public String sysString(){
+
+	@Override
+	public String toString(){
 		return ipAddress.toString() + ":" + port;
 	}
 	

@@ -16,6 +16,8 @@ import message.Message;
 import message.MsgText;
 import model.Address;
 
+import javax.swing.*;
+
 public class Network implements INetworkSubject{
 
 	
@@ -58,7 +60,7 @@ public class Network implements INetworkSubject{
 		
 		observers = new ArrayList<INetworkObserver>();
 
-		if(initAddresses()==0){
+		if(!initAddresses()){
 			System.out.println("Messed up addresses");
 
 		}
@@ -164,39 +166,52 @@ public class Network implements INetworkSubject{
 	}
 
 
+	/**
+	 * Initialize Local and broadcast addresses. Checks of the interface in order to find an address that is not loopback
+	 * @return true if a suitable local address is found
+	 */
 
-	private int initAddresses(){
+	private boolean initAddresses(){
 
 		try {
 			System.out.println("Listing Network addresses untill finding a suitable one");
 			Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
+			// Listing network interfaces interfaces
 			for (NetworkInterface netint : Collections.list(nets)) {
 
-
+				// discarding loopback and virtual interfaces
 				if(netint.isLoopback() ||  netint.isVirtual()){
 					continue;
 				}
+
+				// Listing Address for the current interface
 				Enumeration<InetAddress> inetenum =  netint.getInetAddresses();
+				int cptAddr =  0;
 				for(InetAddress addr : Collections.list( inetenum)){
 
-					if(addr.isAnyLocalAddress() || addr.isLoopbackAddress() || addr.isLinkLocalAddress() ||addr.isAnyLocalAddress() ){
+					//Discarding bad addresses
+					if(addr.isAnyLocalAddress() || addr.isLoopbackAddress() || addr.isLinkLocalAddress() ){
+						++cptAddr;
 						continue;
 					}
 					else{
 						System.out.println(addr.getHostAddress());
 
-						if(addr.getHostAddress().contains("192.168.56") || addr.getHostAddress().length() > 15){
-
-							//System.out.println("Raté");
+						//Discarding addresses too long (not IP) or loopback that wasn't catched earlier.
+						if(addr.getHostAddress().contains("192.168.56") || addr.getHostAddress().length() > 15 ){
+							++cptAddr;
+							continue;
 						}
 						else {
-
+							//netint.getInterfaceAddresses().get(0);
+							System.out.println(" cptAddr : " + cptAddr);
 							System.out.println("Local Address : " + addr.toString());
-							System.out.println("Broadcast Address : "   + netint.getInterfaceAddresses().get(0).getBroadcast().toString()); //TODO Réparer
-
-							broadcastAddress = new Address (netint.getInterfaceAddresses().get(0).getBroadcast(), port );
+							System.out.println("Broadcast Address : "   + netint.getInterfaceAddresses().get(cptAddr).getBroadcast().toString()); //TODO Réparer, maitenant ça marche peut-être
+						//	System.out.println("Generated Broadcast mask : " +  netint.getInterfaceAddresses().get(0).getBroadcast().);
+							System.out.println("Network mask : /" + netint.getInterfaceAddresses().get(cptAddr).getNetworkPrefixLength());
+							broadcastAddress = new Address (netint.getInterfaceAddresses().get(cptAddr).getBroadcast(), port );
 							localAddress = new Address(addr, port);
-							return 1;
+							return true;
 						}
 					}
 				}
@@ -206,7 +221,7 @@ public class Network implements INetworkSubject{
 			e.printStackTrace();
 		}
 
-		return 0;
+		return false;
 	}
 
 
@@ -214,6 +229,13 @@ public class Network implements INetworkSubject{
 	public Address getLocalAddress() {
 		return localAddress;
 	}
+
+	/**
+	 * Displays every Network interface with their addresses.
+	 * @param netint
+	 * @throws SocketException
+	 */
+
 
 	static void displayInterfaceInformation(NetworkInterface netint) throws SocketException {
 		System.out.printf("Display name: %s\n", netint.getDisplayName());
