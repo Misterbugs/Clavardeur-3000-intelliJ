@@ -142,7 +142,7 @@ public class Network implements INetworkSubject{
 	
 	}
 
-	public byte[] serializeMessage(Message message){
+	public static byte[] serializeMessage(Message message){
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
 		ObjectOutputStream o = null;

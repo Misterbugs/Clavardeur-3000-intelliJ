@@ -55,7 +55,6 @@ public class NetworkHandler implements INetworkObserver{
 				System.out.println("Text message : \"" + txtMesg.getTextMessage() + "\""); //DEBUG
 
 				String fullUserName = User.fullUserName(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()));
-				//System.out.println("Created username : " + fullUserName);
 
 				Model.getInstance().getSimpleConversations().get(fullUserName).addMessage(txtMesg);
 

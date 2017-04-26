@@ -41,16 +41,19 @@ public class NetworkTCPClient {
 
 
     public void sendMessage(Message mesg){
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+        /*ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
 
         ObjectOutputStream o = null;
-        try {
+
             o = new ObjectOutputStream(bos);
             o.writeObject(mesg);
             o.flush();
             o.close();
-            byte[] b = bos.toByteArray();
+           // byte[] b = bos.toByteArray();*/
+        try {
+            byte[] b = Network.serializeMessage(mesg);
             //System.out.println(b.toString());
             System.out.println("Client TCP : Envoi de message");
             socket.getOutputStream().write(b);

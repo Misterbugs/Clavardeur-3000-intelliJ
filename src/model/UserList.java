@@ -143,15 +143,15 @@ public class UserList implements IUserListSubject{
      * @return The User if it was found | null if not
      */
     public User getUser(String fullUserName){
-        System.out.println("Looking for " + fullUserName);
+        //System.out.println("Looking for " + fullUserName);
         for(User usr : knownUsers){
-            System.out.println("current : " + usr.getFullUserName());
+            //System.out.println("current : " + usr.getFullUserName());
             if((usr.getFullUserName().equals(fullUserName))){
-                System.out.println("User found");
+               // System.out.println("User found");
                 return usr;
             }
         }
-        System.out.println("User not found...");
+        System.out.println(fullUserName + " was not found in the userList");
         return null;
     }
 

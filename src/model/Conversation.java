@@ -27,9 +27,14 @@ public class Conversation implements Serializable, IConversationSubject{
 	}
 	
 	public void addMessage(MsgText message){
-		//TODO Check the last message not to send 2 time the same thing
-		this.messageList.add(message);
-		notifyObserver(message);
+		//Check if the message is already in the conversation (when ack is lost for exemple)
+		if(!containsMessage(message)) {
+			this.messageList.add(message);
+			notifyObserver(message);
+		}
+		else{
+			System.out.println("Received the same message as before");
+		}
 		
 	}
 
@@ -68,5 +73,27 @@ public class Conversation implements Serializable, IConversationSubject{
 		for(IConversationObserver o : observers){
 			o.update(mesg);
 		}
+	}
+
+	/**
+	 * Checks if a message is already in a conversation
+	 * @param mesg
+	 * @return true if the message is already in the conversation
+	 */
+
+	private boolean containsMessage(Message mesg){
+
+		//Building full username for the message
+		String messageUser = User.fullUserName(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()));
+
+		for(Message m : messageList){
+			//Building full username for the compared message
+			String testUser = User.fullUserName(m.getSourceUserName(), new Address(m.getSourceAddress(), m.getSourcePort()));
+
+			if(m.getNumMessage() == mesg.getNumMessage() && messageUser.equals(testUser)){
+				return true;
+			}
+		}
+		return false;
 	}
 }

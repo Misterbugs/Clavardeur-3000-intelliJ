@@ -104,8 +104,18 @@ public class Main {
 
 		tClient.start();
 
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
+		System.out.println("Exiting");
+		System.exit(1);
 	}
+
+
+
 
 
 
