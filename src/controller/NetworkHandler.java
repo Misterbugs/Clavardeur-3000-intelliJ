@@ -9,9 +9,13 @@ import model.Model;
 import model.User;
 import model.UserList;
 import network.Network;
+import network.NetworkTCPServer;
 
 import javax.jws.WebParam;
-import java.io.File;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,6 +60,9 @@ public class NetworkHandler implements INetworkObserver{
 		System.out.println();
 		System.out.println("HANDLER : A message is received from " + mesg.getSourceUserName() + " of type " + mesg.getClass());
 
+		User sourceUser = UserList.getInstance().getSourceUser(mesg);
+
+
 		if (Model.getInstance().getLocalUser() != null) {
 
 			if (mesg instanceof MsgText) {
@@ -63,22 +70,24 @@ public class NetworkHandler implements INetworkObserver{
 				MsgText txtMesg = (MsgText) mesg;
 				System.out.println("Text message : \"" + txtMesg.getTextMessage() + "\""); //DEBUG
 
-				String fullUserName = User.fullUserName(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()));
+				//String fullUserName = User.fullUserName(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()));
+				if (sourceUser != null) {
+					Model.getInstance().getSimpleConversations().get(sourceUser.getFullUserName()).addMessage(txtMesg);
 
-				Model.getInstance().getSimpleConversations().get(fullUserName).addMessage(txtMesg);
-
-				//sending ACK
-				sendMessage(MsgFactory.createAckMessage(mesg));
-
+					//sending ACK
+					sendMessage(MsgFactory.createAckMessage(mesg));
+				}
 
 			} else if (mesg instanceof MsgHello) {
 
-				User usr = new User(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()), true);
-
-				if(usr.getFullUserName().equals( Model.getInstance().getLocalUser().getFullUserName())  && !seeLocalUser){
-				    //if it is our own hello mesage.
-					System.out.println("Received our own hello message => IGNORED");
-				}else{
+				//if(usr.getFullUserName().equals( Model.getInstance().getLocalUser().getFullUserName())  && !seeLocalUser){
+				if (sourceUser != null) {
+					if (sourceUser.isLocalUser()) {
+						//if it is our own hello mesage.
+						System.out.println("Received our own hello message => IGNORED");
+					}
+				} else {
+					User usr = new User(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()), true);
 					System.out.println("Hello :) Adding to the UserList");
 
 					UserList.getInstance().addUser(usr);
@@ -88,59 +97,103 @@ public class NetworkHandler implements INetworkObserver{
 					sendMessage(replymesg);
 				}
 
+			} else if (mesg instanceof MsgReplyPresence) {
+				//
+				if (sourceUser != null) {
 
+					if (sourceUser.isLocalUser()) {
+						// if it is our own own presence message we ignore it.
+						System.out.println("Received our own ReplyPresence message => IGNORED ");
+					} else {
 
-			}
-			else if (mesg instanceof  MsgReplyPresence){
-				User usr = new User(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()), true);
-
-				if(usr.getFullUserName().equals( Model.getInstance().getLocalUser().getFullUserName())){
-				    // if it is our own own presence message we ignore it.
-					System.out.println("Received our own ReplyPresence message => IGNORED ");
-				}else{
-					System.out.println("Someone replied :) Adding to the UserList");
+					}
+				} else {
+					User usr = new User(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()), true);
+					System.out.println("Someone that we don't know replied :) Adding to the UserList");
 					UserList.getInstance().addUser(usr);
 				}
 
-			}
-			else if (mesg instanceof MsgBye) {
+			} else if (mesg instanceof MsgBye) {
 				System.out.println("The user has left");
-				UserList.getInstance().updateUserStatus(UserList.getInstance().getUser(User.fullUserName(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(),mesg.getSourcePort()))), false);
-			}
+				UserList.getInstance().updateUserStatus(UserList.getInstance().getUser(User.fullUserName(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()))), false);
 
+			} else if (mesg instanceof MsgFile) {
+				MsgFile msgFile = (MsgFile)mesg;
+				try {
 
+					System.out.println("File size : "+ msgFile.getFileData().length);
+					OutputStream out = new FileOutputStream(new File("Downloads/" + msgFile.getFile().getName()));
+					out.write(msgFile.getFileData());
 
-			else if (mesg instanceof MsgFile) {
-				System.out.println("Testing File Received");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 
-			}
-
-			else if (mesg instanceof MsgAck){
-				System.out.println("Received ACK for message #" + ((MsgAck)mesg).getNumMessage());
+			} else if (mesg instanceof MsgAck) {
+				System.out.println("Received ACK for message #" + ((MsgAck) mesg).getNumMessage());
 				//waitingForAck.get(mesg.getNumMessage()) = false;
 				//
-				if(waitingForAck.get(mesg.getNumMessage())!=null){
+				if (waitingForAck.get(mesg.getNumMessage()) != null) {
 					waitingForAck.put(mesg.getNumMessage(), true); // ACK has been received
 				}
 			}
-			else if(mesg instanceof MsgAskFile){
-				MsgAskFile msgAskFile = (MsgAskFile)mesg;
-				User usr = new User(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()), true);
 
-				Model.getInstance().getConversation(usr.getFullUserName()).notifyObserver(msgAskFile);
-
-				System.out.println("Filename : \""+ msgAskFile.getFilename()+"\", Size : " + msgAskFile.getSize()/ 1024 + "Ko port : "+ msgAskFile.getSendingTCPPort());
-			}
-			else if (mesg instanceof MsgReplyFile){
-				MsgReplyFile msgReplyFile = (MsgReplyFile) mesg;
-				if(msgReplyFile.isAcceptsTranfer()){
-					System.out.println(msgReplyFile.getSourceUserName() + " accepted to receive our file");
+			/**
+			 * When a remote user wants to send a file to the local user
+			 * The interface is notified alowing the local user to make a choice
+			 */
+			else if (mesg instanceof MsgAskFile) {
+				MsgAskFile msgAskFile = (MsgAskFile) mesg;
+				if (sourceUser != null) {
+					Model.getInstance().getConversation(sourceUser.getFullUserName()).notifyObserver(msgAskFile);
+					System.out.println("Filename : \"" + msgAskFile.getFilename() + "\", Size : " + msgAskFile.getSize() / 1024 + "Ko port : " + msgAskFile.getSendingTCPPort());
 				}
-				else{
-					System.out.println(msgReplyFile.getSourceUserName() + " declined our file :'(");
 
-				}
+			} else if (mesg instanceof MsgReplyFile) {
+				if(sourceUser != null){
+					MsgReplyFile msgReplyFile = (MsgReplyFile) mesg;
+					if (msgReplyFile.isAcceptsTranfer()) {
+						System.out.println(msgReplyFile.getSourceUserName() + " accepted to receive our file on port " + msgReplyFile.getReceivingTCPPort());
+						File file = pendingUploads.get(sourceUser);
+						if (file != null) {
+
+							Address tcpAddr = new Address(sourceUser.getAddress().getIpAdress(), msgReplyFile.getReceivingTCPPort());
+							//Path path = Paths.get(file.toURI());
+							RandomAccessFile f = null;
+							byte[] fileData = null;
+							try {
+								f = new RandomAccessFile(file, "r");
+							} catch (FileNotFoundException e) {
+								e.printStackTrace();
+							}
+
+							if(f!=null){
+								try {
+									fileData = new byte[(int)f.length()];
+									f.readFully(fileData);
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							}
+
+							if(fileData != null) {
+								Message message = MsgFactory.createFileMessage(Model.getInstance().getLocalUser(), tcpAddr, file, fileData);
+
+								net.sendTCPMessage(message);
+								pendingUploads.remove(sourceUser);
+							}else{
+								System.out.println("Couldn't get the data from the file");
+							}
+						} else {
+							System.out.println("Couldn't get file from pending uploads");
+						}
+
+					} else {
+						System.out.println(msgReplyFile.getSourceUserName() + " declined our file :'(");
+
+					}
 			}
+		}
 
 		}
 	}
@@ -162,7 +215,7 @@ public class NetworkHandler implements INetworkObserver{
 	 *
 	 *
 	 * @param message
-	 * @param f callback function that is called. Calls with the argument 1 if ACK is received, -1 if it is not received
+	 * @param callbackFunction callback function that is called. Calls with the argument 1 if ACK is received, -1 if it is not received
 	 * @return
 	 */
 
@@ -260,10 +313,25 @@ public class NetworkHandler implements INetworkObserver{
 		}
 	}
 
+
+	/**
+	 * When a file is accepted by the local user
+	 * Creates the TCP socket to receive the file and kills it when the file is received.
+	 * @param distantUser
+	 * @param filename
+	 * @param size
+	 */
 	public void acceptFile(User distantUser, String filename, long size){
-		sendMessage(MsgFactory.createReplyFileMessage(Model.getInstance().getLocalUser(), distantUser, 2049, true));
+
+		int port =net.receiveTCPMessage();
+		sendMessage(MsgFactory.createReplyFileMessage(Model.getInstance().getLocalUser(), distantUser, port, true));
 	}
 
+	/**
+	 * Declines the receiving of a file.
+	 * @param distantUser
+	 * @param filename
+	 */
 	public void declineFile(User distantUser, String filename){
 		sendMessage(MsgFactory.createReplyFileMessage(Model.getInstance().getLocalUser(), distantUser, -1, false));
 

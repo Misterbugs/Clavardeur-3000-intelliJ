@@ -15,7 +15,7 @@ public class NetworkTCPClient {
 
     Socket socket;
 
-    public NetworkTCPClient(Address remoteAddress){
+    public NetworkTCPClient(Address remoteAddress) throws IOException {
 
         try {
 
@@ -29,9 +29,6 @@ public class NetworkTCPClient {
 
 
         }catch (UnknownHostException e) {
-
-            e.printStackTrace();
-        }catch (IOException e) {
 
             e.printStackTrace();
         }
@@ -61,7 +58,7 @@ public class NetworkTCPClient {
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        };
+        }
     }
 
     public void killSocket() throws IOException {

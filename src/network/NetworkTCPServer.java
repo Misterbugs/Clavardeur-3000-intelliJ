@@ -1,6 +1,7 @@
 package network;
 
 import message.Message;
+import org.junit.experimental.theories.Theories;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -11,66 +12,83 @@ import java.net.Socket;
  */
 public class NetworkTCPServer {
 
-    ServerSocket socketserver  ;
-    Socket socketduserveur ;
+    ServerSocket serverSocket  ;
+    Socket listeningSocket ;
 
 
-    public NetworkTCPServer(int port) throws IOException {
+    public NetworkTCPServer() throws IOException {
+            // Instanciation with port 0 will give a free port to the socket
+            serverSocket = new ServerSocket(0);
 
-
-            socketserver = new ServerSocket(port);
-            System.out.println("Le serveur est à l'écoute du port "+socketserver.getLocalPort());
-
-
-           /* socketduserveur.close();
-            socketserver.close();*/
-
-
+            System.out.println("Le serveur est à l'écoute du port "+ serverSocket.getLocalPort());
     }
 
 
     /**
      *
-     * @return a message received through TCP. The method is blocked until a message is received.
-     * @throws IOException
+     * The method starts a thread that will wait for a message to be received
+     * When a message is received it will notify the observers of Network with it.
      */
 
-    public Message receiveMessage() throws IOException {
+    public void receiveMessage(boolean killSocketAfterReceive) {
 
-        if(!socketserver.isClosed()) {
-            System.out.println("Waiting for a message");
-            socketduserveur = socketserver.accept();
-            System.out.println("We received something ");
+        Thread tReceiveMessage = new Thread(()->{
+            if(!serverSocket.isClosed()) {
+                System.out.println("Waiting for a message");
+                try {
+                    listeningSocket = serverSocket.accept();
 
-            ObjectInputStream iStream = new ObjectInputStream(socketduserveur.getInputStream());
-            try {
-                Object o = iStream.readObject();
-                if (o instanceof Message) {
-                    iStream.close();
-                    return (Message) o;
-                } else {
-                    System.out.println("The object received by TCP wasn't a message");
-                    iStream.close();
-                    return null;
+                    System.out.println("We received something ");
+
+                    ObjectInputStream iStream = new ObjectInputStream(listeningSocket.getInputStream());
+                    try {
+                        //System.out.println("HELLO");
+                        Object o = iStream.readObject();
+                        if (o instanceof Message) {
+                            iStream.close();
+                            //return (Message) o;
+                            Thread t = new Thread(()->{
+                                //System.out.println("NOTIFIED");
+                                Network.getInstance().notifyObserver((Message)o);
+
+                            });
+                            t.start();
+                        } else {
+                            System.out.println("The object received by TCP wasn't a message");
+                            iStream.close();
+                        }
+                        if(killSocketAfterReceive){
+                            System.out.println("killing socket?");
+                            this.killSocket();
+                        }
+
+
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-
-
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+            }else{
+                System.out.println("TCP Server : Can't receive message, server socket is closed !");
             }
-       }else{
-            System.out.println("TCP Server : Can't receive message, server socket is closed !");
-        }
+        });
 
+        tReceiveMessage.start();
+    }
 
-
-        return null;
+    public int getPort(){
+        return serverSocket.getLocalPort();
     }
 
     public void killSocket() throws IOException {
-        System.out.println("Server TCP Socket killed");
-        socketduserveur.close();
-        socketserver.close();
+       if(!serverSocket.isClosed()) {
+           System.out.println("Killing TCP server socket");
+           listeningSocket.close();
+           serverSocket.close();
+       }else{
+           System.out.println("Can't kill socket : it's already closed.");
+       }
     }
 
 }

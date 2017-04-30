@@ -13,6 +13,7 @@ import model.User;
 import network.Network;
 import network.NetworkTCPClient;
 import network.NetworkTCPServer;
+import sun.nio.ch.Net;
 
 
 public class Main {
@@ -73,9 +74,11 @@ public class Main {
 
 		Thread tServer = new Thread(()->{
 			try {
-				NetworkTCPServer tcpServ = new NetworkTCPServer(2049);
+
+				NetworkTCPServer tcpServ = new NetworkTCPServer();
+
 				System.out.println("Hello?");
-				tcpServ.receiveMessage();
+				tcpServ.receiveMessage(true);
 				tcpServ.killSocket();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -84,10 +87,19 @@ public class Main {
 		});
 
 		Thread tClient = new Thread (()->{
-			NetworkTCPClient tcpClient = new NetworkTCPClient(new Address(net.getLocalAddress().getIpAdress(), 2049));
-			tcpClient.sendMessage(MsgFactory.createMessage(mod.getLocalUser(), mod.getLocalUser(),"Test TCP"));
+			NetworkTCPClient tcpClient = null;
 			try {
-				tcpClient.killSocket();
+				tcpClient = new NetworkTCPClient(new Address(net.getLocalAddress().getIpAdress(), 2049));
+			} catch (IOException e) {
+				System.out.println("Could not initialize client : " + e.getLocalizedMessage() );
+			}
+			if(tcpClient != null){
+				tcpClient.sendMessage(MsgFactory.createMessage(mod.getLocalUser(), mod.getLocalUser(),"Test TCP"));
+			}
+			try {
+				if(tcpClient != null) {
+					tcpClient.killSocket();
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

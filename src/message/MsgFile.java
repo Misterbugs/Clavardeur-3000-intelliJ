@@ -11,18 +11,11 @@ public class MsgFile extends Message{
 	private static final long serialVersionUID = 7746685928835284793L;
 
 	/**
-	 * Name of the file to send
-	 */
-	private String fileName;
-	
-	/**
 	 * File
 	 */
-	private File theFile;
+	private File file;
+	private byte[] fileData;
 	
-	/**
-	 * The size of the file
-	 */
 
 
 	/**
@@ -32,45 +25,18 @@ public class MsgFile extends Message{
 	 * @param destinationAddress
 	 * @param destinationPort
 	 * @param numMessage
-	 * @param fileName
+	 * @param file
 	 */
-	public MsgFile(InetAddress sourceAddress, int sourcePort, String senderUserName, InetAddress destinationAddress, int destinationPort,int numMessage, String fileName) {
+	public MsgFile(InetAddress sourceAddress, int sourcePort, String senderUserName, InetAddress destinationAddress, int destinationPort,int numMessage, File file, byte[] fileData) {
 		super(sourceAddress, sourcePort, senderUserName, destinationAddress, destinationPort, numMessage);
-		
-		this.theFile = new File(fileName);
-	}
-	
-	/**
-	 * A beautiful constructor using directly the File
-	 * @param sourceAddress
-	 * @param sourcePort
-	 * @param destinationAddress
-	 * @param destinationPort
-	 * @param numMessage
-	 * @param theFile
-	 */
-	public MsgFile(InetAddress sourceAddress, int sourcePort, InetAddress destinationAddress, int destinationPort, int numMessage, File theFile) {
-		super(sourceAddress, sourcePort, "", destinationAddress, destinationPort, numMessage);
-		
-		this.theFile = theFile;
+
+		this.fileData = fileData;
+		this.file = file;
 	}
 
-	public String getFileName() {
-		return fileName;
+	public byte[] getFileData(){ return fileData;}
+	public File getFile() {
+		return file;
 	}
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
-
-	public File getTheFile() {
-		return theFile;
-	}
-
-	public void setTheFile(File theFile) {
-		this.theFile = theFile;
-	}
-
-	
 
 }

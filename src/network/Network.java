@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 
+import com.sun.security.ntlm.Server;
 import controller.INetworkObserver;
 import message.Message;
 import message.MsgText;
@@ -204,7 +205,7 @@ public class Network implements INetworkSubject{
 						}
 						else {
 							//netint.getInterfaceAddresses().get(0);
-							System.out.println(" cptAddr : " + cptAddr);
+							//System.out.println(" cptAddr : " + cptAddr);
 							System.out.println("Local Address : " + addr.toString());
 							System.out.println("Broadcast Address : "   + netint.getInterfaceAddresses().get(cptAddr).getBroadcast().toString()); //TODO Réparer, maitenant ça marche peut-être
 						//	System.out.println("Generated Broadcast mask : " +  netint.getInterfaceAddresses().get(0).getBroadcast().);
@@ -225,9 +226,55 @@ public class Network implements INetworkSubject{
 	}
 
 
-
 	public Address getLocalAddress() {
 		return localAddress;
+	}
+
+
+	/**
+	 *	Initialize a TCP server that will receive the file.
+	 * @return the port number of the socket created, returns -1 if there was an error
+	 */
+	public int receiveTCPMessage(){
+		NetworkTCPServer networkTCPServer =null;
+		try {
+			networkTCPServer = new NetworkTCPServer();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		networkTCPServer.receiveMessage(true);
+
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		if(networkTCPServer != null ){
+			return networkTCPServer.getPort();
+		}else{
+			return -1;
+		}
+	}
+
+
+	/**
+	 * Creates and kills a TCP client socket in order to send a message
+	 * @param mesg
+	 * @return
+	 */
+	public int sendTCPMessage(Message mesg){
+		try {
+			NetworkTCPClient networkTCPClient = new NetworkTCPClient(new Address(mesg.getDestinationAddress(), mesg.getDestinationPort()));
+			networkTCPClient.sendMessage(mesg);
+			networkTCPClient.killSocket();
+			return 1;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return -1;
+
 	}
 
 	/**
@@ -235,7 +282,6 @@ public class Network implements INetworkSubject{
 	 * @param netint
 	 * @throws SocketException
 	 */
-
 
 	static void displayInterfaceInformation(NetworkInterface netint) throws SocketException {
 		System.out.printf("Display name: %s\n", netint.getDisplayName());

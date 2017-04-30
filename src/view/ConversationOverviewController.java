@@ -94,14 +94,16 @@ public class ConversationOverviewController implements IConversationObserver {
 				}
 			}
 		);
-
+		//labelDestName.getLabelFor().accessibleTextProperty().setValue("Test");
 		//Lambda to make the enter key send message
+		labelDestName.setText("epifhepolfihepifheph");
+
 		textToSend.setOnKeyPressed((event) -> {
 			/*if (event.getCode() == KeyCode.SHIFT) {
 				System.out.println("Shift Pressed");
 				shiftPressed = true;
 			}*/
-
+			//labelDestName.getLabelFor().accessibleTextProperty().setValue("Test");
 			if ((event.getCode() == KeyCode.ENTER) && !shiftPressed) {
 				event.consume();
 				sendText();
@@ -149,7 +151,7 @@ public class ConversationOverviewController implements IConversationObserver {
 			appendMessage(m);
 		}
 		conversation.register(this);
-		//labelDestName.setText("Conversation with " + ((SimpleConversation) conversation).getReceiver().getUserNameString());
+		labelDestName.setText("Conversation with " + ((SimpleConversation) conversation).getReceiver().getUserNameString());
 
 	}
 
@@ -226,7 +228,11 @@ public class ConversationOverviewController implements IConversationObserver {
 		else if(mesg instanceof MsgAskFile){
 
 			Platform.runLater(() -> {
+
+
 						MsgAskFile filemesg = (MsgAskFile) mesg;
+
+						// generating the popup that ask if the user wants to receive the file.
 						Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 						alert.setTitle(filemesg.getSourceUserName() + " wants to send you a file");
 						alert.setContentText("Filename : \""+ filemesg.getFilename()+"\"" + System.lineSeparator() +
@@ -238,7 +244,10 @@ public class ConversationOverviewController implements IConversationObserver {
 						ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.NO);
 
 						alert.getButtonTypes().setAll(okButton, noButton);
+
+						// Managing the outcomes depending on the users' choice
 						alert.showAndWait().ifPresent(type -> {
+
 							if (type == okButton) {
 								//
 								System.out.println("Accepting file");
