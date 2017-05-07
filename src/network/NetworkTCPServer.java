@@ -58,7 +58,7 @@ public class NetworkTCPServer {
                             iStream.close();
                         }
                         if(killSocketAfterReceive){
-                            System.out.println("killing socket?");
+                            System.out.println("killing socket");
                             this.killSocket();
                         }
 
@@ -87,7 +87,7 @@ public class NetworkTCPServer {
            listeningSocket.close();
            serverSocket.close();
        }else{
-           System.out.println("Can't kill socket : it's already closed.");
+           System.out.println("Can't kill socket : the socket is already closed.");
        }
     }
 

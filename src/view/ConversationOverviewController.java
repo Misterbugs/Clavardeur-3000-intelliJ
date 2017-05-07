@@ -1,10 +1,8 @@
 package view;
 
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
-import controller.MainApp;
+import controller.Controller;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -70,7 +68,7 @@ public class ConversationOverviewController implements IConversationObserver {
 				if(file != null){
 
 
-					mainApp.getNet().sendAskFile(((SimpleConversation) conversation).getReceiver(), file, (callbackCode)->{
+					Controller.getInstance().getNetworkHandler().sendAskFile(((SimpleConversation) conversation).getReceiver(), file, (callbackCode)->{
 						if(callbackCode==1){
 
 						}else {
@@ -191,7 +189,7 @@ public class ConversationOverviewController implements IConversationObserver {
 
 			Message msg = MsgFactory.createMessage(model.getLocalUser(), ((SimpleConversation) conversation).getReceiver(), textToSend.getText());
 			//mainApp.net.sendMessage(msg);
-			mainApp.getNet().sendMessageACK(msg, result -> {
+			Controller.getInstance().getNetworkHandler().sendMessageACK(msg, result -> {
 				if(result == 1){
 					conversation.addMessage((MsgText) msg);
 				}
@@ -251,10 +249,10 @@ public class ConversationOverviewController implements IConversationObserver {
 							if (type == okButton) {
 								//
 								System.out.println("Accepting file");
-								mainApp.getNet().acceptFile(UserList.getInstance().getSourceUser(filemesg),filemesg.getFilename(),filemesg.getSize());
+								Controller.getInstance().getNetworkHandler().acceptFile(UserList.getInstance().getSourceUser(filemesg),filemesg.getFilename(),filemesg.getSize());
 							} else{
 
-								mainApp.getNet().declineFile(UserList.getInstance().getSourceUser(filemesg),filemesg.getFilename());
+								Controller.getInstance().getNetworkHandler().declineFile(UserList.getInstance().getSourceUser(filemesg),filemesg.getFilename());
 								//mainApp.getNet().sendMessage(MsgFactory.createReplyFileMessage())
 							}
 						});

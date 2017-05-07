@@ -20,13 +20,7 @@ public class NetworkTCPClient {
         try {
 
             socket = new Socket(remoteAddress.getIpAdress(),remoteAddress.getPort());
-            System.out.println("Client TCP : Demande de connexion");
-
-            /*in = new BufferedReader (new InputStreamReader(socket.getInputStream()));
-            String message_distant = in.readLine();
-            System.out.println(message_distant);
-            */
-
+            System.out.println("TCP Client : trying to connect...");
 
         }catch (UnknownHostException e) {
 
@@ -39,20 +33,9 @@ public class NetworkTCPClient {
 
     public void sendMessage(Message mesg){
 
-        /*ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-
-        ObjectOutputStream o = null;
-
-            o = new ObjectOutputStream(bos);
-            o.writeObject(mesg);
-            o.flush();
-            o.close();
-           // byte[] b = bos.toByteArray();*/
         try {
             byte[] b = Network.serializeMessage(mesg);
-            //System.out.println(b.toString());
-            System.out.println("Client TCP : Envoi de message");
+            System.out.println("TCP Client : Sending message");
             socket.getOutputStream().write(b);
 
         } catch (IOException e) {
@@ -62,7 +45,7 @@ public class NetworkTCPClient {
     }
 
     public void killSocket() throws IOException {
-        System.out.println("Client TCP Socket killed");
+        System.out.println("TCP Client : Socket killed");
         socket.close();
     }
 }

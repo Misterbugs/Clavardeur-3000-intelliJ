@@ -24,7 +24,7 @@ public class Network implements INetworkSubject{
 	
 	private DatagramSocket sock;
 	private int port = 2048; //default value
-	private InetAddress IPAddress;
+	//private InetAddress IPAddress;
 
 	private Address localAddress;
 	private Address broadcastAddress;
@@ -58,8 +58,9 @@ public class Network implements INetworkSubject{
     }
 	
 	private Network(){
-		
-		observers = new ArrayList<INetworkObserver>();
+
+
+		observers = new ArrayList<>();
 
 		if(!initAddresses()){
 			System.out.println("Messed up addresses");
@@ -74,45 +75,36 @@ public class Network implements INetworkSubject{
 			System.exit(-1);
 			e1.printStackTrace();
 		}  
-		
-		Thread t = new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				byte[] receiveData = new byte[1024];
-				ByteArrayInputStream bis = new ByteArrayInputStream(receiveData);
-				ObjectInput in = null;
 
-				System.out.println("UDP Socket Started !");
-				while(true){
+		Thread t = new Thread(()->{
 
-					DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-					
-					try {
-						sock.receive(receivePacket);
-						ObjectInputStream iStream = new ObjectInputStream(new ByteArrayInputStream(receiveData));
-						Object o = iStream.readObject();
-						iStream.close();
+			byte[] receiveData = new byte[1024];
+			System.out.println("UDP Socket Started !");
+			while(true){
 
-						if(o instanceof Message){
-							Message mesg = (Message)o;
-							notifyObserver(mesg);
+				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 
-						}else{
-							System.out.println("Object received is not a message, class is " + o.getClass().toString());
-							//TODO make a throw declaration?
-						}
-						
-						
-						
-					} catch (IOException | ClassNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+				try {
+					sock.receive(receivePacket);
+					ObjectInputStream iStream = new ObjectInputStream(new ByteArrayInputStream(receiveData));
+					Object o = iStream.readObject();
+					iStream.close();
+
+					if(o instanceof Message){
+						Message mesg = (Message)o;
+						notifyObserver(mesg);
+
+					}else{
+						System.out.println("Object received is not a message, class is " + o.getClass().toString());
+						//TODO make a throw declaration?
 					}
+
+				} catch (IOException | ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		});
-		
 		
 		t.start();
 	}
@@ -120,7 +112,7 @@ public class Network implements INetworkSubject{
 	
 	public void sendMessage(String data){
 		System.out.println("Sending");
-		DatagramPacket sendData = new DatagramPacket(data.getBytes(), data.getBytes().length, IPAddress, port);
+		DatagramPacket sendData = new DatagramPacket(data.getBytes(), data.getBytes().length, localAddress.getIpAdress(), port);
 		try {
 			sock.send(sendData);
 		} catch (IOException e) {

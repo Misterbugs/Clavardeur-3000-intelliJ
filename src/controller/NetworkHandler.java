@@ -23,6 +23,9 @@ import java.util.function.Function;
 
 /**
  * Interracts with the network in order to send and receive messages.
+ * Updates the model.
+ * Implements a Singleton Design Pattern, as well as an Observer Design Pattern
+ * It is the observer of the observer pattern.
  * 
  * @author Romain
  *
@@ -57,6 +60,7 @@ public class NetworkHandler implements INetworkObserver{
 	 */
 	@Override
 	public void update(Message mesg) {
+
 		System.out.println();
 		System.out.println("HANDLER : A message is received from " + mesg.getSourceUserName() + " of type " + mesg.getClass());
 
@@ -335,6 +339,40 @@ public class NetworkHandler implements INetworkObserver{
 	public void declineFile(User distantUser, String filename){
 		sendMessage(MsgFactory.createReplyFileMessage(Model.getInstance().getLocalUser(), distantUser, -1, false));
 
+	}
+
+	/**
+	 * Sends one or multiple Hello messages
+	 *
+	 * @param sendOneTime true if the hello message is broadcasted only once
+	 *                    false if the hello message is sent periodically
+	 * @param period time in seconds between two broadcasts of hello messages on the network
+	 */
+
+	public void sendHello(boolean sendOneTime, int period){
+
+
+		if(sendOneTime){
+
+			Network.getInstance().sendMessage(MsgFactory.createHelloMessage(Model.getInstance().getLocalUser(),
+					Network.getInstance().getBroadcastAddress()));
+
+		}else {
+			Thread threadHello = new Thread(() -> {
+				while (true) {
+					Network.getInstance().sendMessage(MsgFactory.createHelloMessage(Model.getInstance().getLocalUser(),
+							Network.getInstance().getBroadcastAddress()));
+					try {
+						Thread.sleep(period*1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+
+			});
+
+			threadHello.start();
+		}
 	}
 
 

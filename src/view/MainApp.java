@@ -1,30 +1,16 @@
-package controller;
+package view;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
+import controller.Controller;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import message.Message;
-import message.MsgFactory;
-import message.MsgText;
-import model.Address;
 import model.Model;
-import model.SimpleConversation;
-import model.User;
-import network.Network;
-import view.ConversationOverviewController;
-import view.LoginWindowController;
-import view.UserOverviewController;
 
 
 public class MainApp extends Application {
@@ -32,69 +18,9 @@ public class MainApp extends Application {
 	private Stage primaryStage;
 	private BorderPane rootLayout;
 
-	public NetworkHandler getNet() {
-		return net;
-	}
-
-	/**
-	 * An easy way t
-	private ObservableMap<String, User> userData;o store and find users
-	 */
-	//private ObservableMap<String, User> userData = FXCollections.observableHashMap();
-	//private ObservableList<User> userData;
-
-	//private ObservableMap<String, SimpleConversation> simpleConversations=FXCollections.observableHashMap();
-	//private ArrayList<Conversation> serializableConversations = new ArrayList<Conversation>();
-	
-	private NetworkHandler net; //TODO c'est dégueu
 	
 	public MainApp(){
-		
-		net = new NetworkHandler( Network.getInstance());
-
-
-		//Serialization xml
-		/**
-		 * Here, we just serialize the text from MsgText objects... Is it sufficient ? ... Maybe not...
-		 * May be good to serialize the Conversation object...
-		 */
-//		XMLEncoder encoder = null;
-//		try{
-//			encoder = new XMLEncoder(new BufferedOutputStream(new FileOutputStream("Conversations.clv")));
-//			encoder.writeObject(serializableConversations);
-//			/*for(Conversation conv : conversations){
-//				for(MsgText msg : conv.getMessageList()){
-//					encoder.writeObject(msg.getTextMessage());
-//				}
-//			}
-//			*/
-//			encoder.flush();
-//
-//		}catch(IOException e){
-//			e.printStackTrace();
-//		}finally{
-//			if(encoder != null){
-//				encoder.close();
-//			}
-//		}
-		//Binary serialization
-		/*ObjectOutputStream oos = null;
-		try{
-			final FileOutputStream file = new FileOutputStream("Conversations.clv");
-			oos = new ObjectOutputStream(file);
-			oos.writeObject(serializableConversations);
-			oos.flush();
-		}catch(final IOException e){
-			e.printStackTrace();
-		}*/
-
-
-
 	}
-	
-	
-	
-
 
 	
 	@Override
@@ -127,7 +53,7 @@ public class MainApp extends Application {
 				Platform.exit();
 
 				if(Model.getInstance().getLocalUser() != null) {
-                    Model.getInstance().logOut();
+                    Controller.getInstance().logOut();
                 }
 				System.out.println("Terminating ...");
 				System.exit(1);
@@ -144,26 +70,26 @@ public class MainApp extends Application {
 	
 	public void showSplashScreen(){
 		//Load userOverview
-				try {
-					
-					FXMLLoader loader = new FXMLLoader();
-					loader.setLocation(MainApp.class.getResource("../view/LoginWindow.fxml"));
-					BorderPane loginWindow = (BorderPane) loader.load();
-				
-					//Set user overview in the center of root layout
-					rootLayout.setCenter(loginWindow);
-					
-				
-					LoginWindowController controller = loader.getController();
-					controller.setMainApp(this);
-					
-					
-				
-				
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		try {
+
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(MainApp.class.getResource("../view/LoginWindow.fxml"));
+			BorderPane loginWindow = (BorderPane) loader.load();
+
+			//Set user overview in the center of root layout
+			rootLayout.setCenter(loginWindow);
+
+
+			LoginWindowController controller = loader.getController();
+			controller.setMainApp(this);
+
+
+
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void showUsersOverview(){
@@ -231,10 +157,7 @@ public class MainApp extends Application {
 			e.printStackTrace();
 		}
 	}
-	
-	//public ObservableList<User> getUserData(){
-	//	return userData;
-	//}
+
 
 	public static void main(String[] args) {
 		launch(args);

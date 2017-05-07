@@ -40,10 +40,9 @@ public class testNet{
 			public void run() {
 				ByteArrayInputStream bis = new ByteArrayInputStream(receiveData);
 				ObjectInput in = null;
-				//ObjectInputStream input = new ObjectInputStream(new FileInputStream("test.tmp"));
+
 				System.out.println("Socket Started !");
 				while(true){
-					//System.out.println("oijoij");
 					DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 					
 					try {

@@ -1,10 +1,6 @@
 package view;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
-import controller.MainApp;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;

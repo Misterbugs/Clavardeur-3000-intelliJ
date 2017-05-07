@@ -56,11 +56,6 @@ public class Address {
 	public void setStringPropertyAddress(StringProperty stringPropertyAddress) {
 		this.stringPropertyAddress = stringPropertyAddress;
 	}
-	
-//	@Override
-//	public String toString() {
-//		return "Address [ipAdress=" + ipAddress + ", port=" + port + "]";
-//	}
 
 	@Override
 	public String toString(){

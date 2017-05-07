@@ -3,6 +3,7 @@ package model;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import controller.NetworkHandler;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -90,38 +91,6 @@ public class Model {
 		return localUser;
 	}
 
-	public int logIn(String userName){
-
-		createLocalUser(userName);
-
-
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		Thread threadHello = new Thread(()->{
-			while(true){
-				Network.getInstance().sendMessage(MsgFactory.createHelloMessage(localUser, Network.getInstance().getBroadcastAddress()));
-				try {
-					Thread.sleep(10000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-
-		});
-		threadHello.start();
-
-		return 1;
-	}
-
-	public int logOut(){
-		System.out.println("Logging out");
-		Network.getInstance().sendMessage(MsgFactory.createByeMessage(localUser, Network.getInstance().getBroadcastAddress()));
-		return 1;
-	}
 
 	public User getLocalUser() {
 		return localUser;

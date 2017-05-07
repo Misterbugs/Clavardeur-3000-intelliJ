@@ -16,10 +16,14 @@ public class UserList implements IUserListSubject{
      */
     private ArrayList<User> knownUsers;
 
+
+    /**
+     * The list of observers that subscribed to the subject
+     */
     private ArrayList<IUserListObserver> observers;
 
 
-    Model model = Model.getInstance();
+    private Model model = Model.getInstance();
 
     @Override
     public void register(IUserListObserver o) {
@@ -56,9 +60,11 @@ public class UserList implements IUserListSubject{
         return SingletonHolder.instance;
     }
 
+
+    /**
+     * Private constructor for the singleton
+     */
     private UserList(){
-        //knownUsers = FXCollections.observableArrayList();
-        //simpleConversations=FXCollections.observableHashMap();
         observers = new ArrayList<>();
         knownUsers = new ArrayList<>();
         model = Model.getInstance();
@@ -74,20 +80,13 @@ public class UserList implements IUserListSubject{
     public int addUser(User usr){
         User storedUser = getUser(usr.getFullUserName());
         if( storedUser == null){
+
             System.out.println("Adding " + usr.getFullUserName() + " to known users !");
 
-            //Somehow this works.... Or does it?
-
             knownUsers.add(usr);
-
             model.addSimpleConversation(usr);
-			/*System.out.println("List of the known users");
-			for(User user : knownUsers){
-				System.out.println(user.getFullUserName());
 
-			}*/
-
-			notifyObserver(usr);
+            notifyObserver(usr);
             return 1;
         }
         else{
@@ -120,6 +119,7 @@ public class UserList implements IUserListSubject{
 
     /**
      * Remove a User from the knownUsers list
+     *
      * @param usr
      * @return
      */
@@ -139,16 +139,15 @@ public class UserList implements IUserListSubject{
 
 
     /**
+     * Returns a User when given a full username
      *
      * @param fullUserName The full user name on this format : userName_Address
      * @return The User if it was found | null if not
      */
     public User getUser(String fullUserName){
-        //System.out.println("Looking for " + fullUserName);
+
         for(User usr : knownUsers){
-            //System.out.println("current : " + usr.getFullUserName());
             if((usr.getFullUserName().equals(fullUserName))){
-               // System.out.println("User found");
                 return usr;
             }
         }
@@ -158,7 +157,10 @@ public class UserList implements IUserListSubject{
 
 
     /**
-     * Gets a the source user of a message from the UserList
+     * return the source user from a message
+     *
+     * @param mesg a Message
+     * @return a User from the userlist or null if no user was found.
      */
     public User getSourceUser(Message mesg){
         return getUser(User.fullUserName(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort())));

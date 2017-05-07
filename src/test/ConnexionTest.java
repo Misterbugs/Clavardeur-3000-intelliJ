@@ -1,6 +1,5 @@
 package test;
 
-import controller.MainApp;
 import model.Model;
 import org.junit.Test;
 

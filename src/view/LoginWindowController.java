@@ -1,18 +1,11 @@
 package view;
 
-import javax.xml.soap.MessageFactory;
-
-import controller.MainApp;
-import controller.NetworkHandler;
+import controller.Controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
-import message.MsgFactory;
-import model.Model;
-import model.User;
-import network.Network;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
@@ -65,7 +58,7 @@ public class LoginWindowController {
 			logInButton.setText("yoyo");
 			System.out.println("Connected as : " + userNameTextField.getText());
 
-			Model.getInstance().logIn(userNameTextField.getText());
+			Controller.getInstance().logIn(userNameTextField.getText());
 
 			mainApp.getRootLayout().setCenter(null);//TODO Who needs to do this ? (same problem for everytime you want to update the main window...)
 			mainApp.showUsersOverview();
