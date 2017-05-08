@@ -272,6 +272,7 @@ public class ConversationOverviewController implements IConversationObserver {
 				newText.setMaxWidth((theVBox.getWidth() / 2) - 1 );
 				newText.setPrefWidth(theVBox.getWidth()/4);
 				newText.setMinWidth(theVBox.getWidth()/5);
+				double boxSize = theVBox.getWidth() - newText.getMaxWidth();
 				newText.setTranslateX(boxSize);
 				newText.setStyle("-fx-background-color: #2076ff; -fx-text-fill: white; -fx-padding: 20px; -fx-fill-width: false;" );;
 				//previousMessages.appendText("You : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
@@ -291,6 +292,7 @@ public class ConversationOverviewController implements IConversationObserver {
 				newText.setMaxWidth((theVBox.getWidth() / 2) - 1 );
 				newText.setPrefWidth(theVBox.getWidth()/4);
 				newText.setMinWidth(theVBox.getWidth()/5);
+				double boxSize = theVBox.getWidth() - newText.getMaxWidth();
 				newText.setTranslateX(boxSize);
 				newText.setStyle("-fx-background-color: #e1ebff; -fx-text-fill: #2f2f2f; -fx-padding: 20px; -fx-fill-width: false;" );;
 				//previousMessages.appendText("You : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
@@ -304,6 +306,7 @@ public class ConversationOverviewController implements IConversationObserver {
 				});
 
 				t.start();
+
 
 			}
 		});
