@@ -1,25 +1,15 @@
 package controller;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
-import com.sun.xml.internal.bind.v2.runtime.property.StructureLoaderBuilder;
-import javafx.application.Platform;
 import message.*;
 import model.Address;
 import model.Model;
 import model.User;
 import model.UserList;
 import network.Network;
-import network.NetworkTCPServer;
-
-import javax.jws.WebParam;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
+
 
 /**
  * Interracts with the network in order to send and receive messages.
@@ -74,7 +64,6 @@ public class NetworkHandler implements INetworkObserver{
 				MsgText txtMesg = (MsgText) mesg;
 				System.out.println("Text message : \"" + txtMesg.getTextMessage() + "\""); //DEBUG
 
-				//String fullUserName = User.fullUserName(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()));
 				if (sourceUser != null) {
 					Model.getInstance().getSimpleConversations().get(sourceUser.getFullUserName()).addMessage(txtMesg);
 
@@ -84,7 +73,6 @@ public class NetworkHandler implements INetworkObserver{
 
 			} else if (mesg instanceof MsgHello) {
 
-				//if(usr.getFullUserName().equals( Model.getInstance().getLocalUser().getFullUserName())  && !seeLocalUser){
 				if (sourceUser != null) {
 					if (sourceUser.isLocalUser()) {
 						//if it is our own hello mesage.
@@ -135,8 +123,7 @@ public class NetworkHandler implements INetworkObserver{
 
 			} else if (mesg instanceof MsgAck) {
 				System.out.println("Received ACK for message #" + ((MsgAck) mesg).getNumMessage());
-				//waitingForAck.get(mesg.getNumMessage()) = false;
-				//
+
 				if (waitingForAck.get(mesg.getNumMessage()) != null) {
 					waitingForAck.put(mesg.getNumMessage(), true); // ACK has been received
 				}
@@ -203,15 +190,20 @@ public class NetworkHandler implements INetworkObserver{
 	}
 	
 	public int sendMessage(Message message){
-		//TODO add error codes
+
 		System.out.println();
 		System.out.println("Sending message of type " + message.getClass().toString());
 		System.out.println("Src : "+ message.getSourceUserName() + " @" + message.getSourceAddress());
 		System.out.println("Dest : @" + message.getDestinationAddress());
 		System.out.println("message #" + message.getNumMessage());
 
-		net.sendMessage(message);
-		return 0;
+		int res = net.sendMessage(message);
+
+		if(res!=1){
+			System.out.println("Network : error : the message couldn't be sent");
+		}
+		return res;
+
 	}
 
 	/**

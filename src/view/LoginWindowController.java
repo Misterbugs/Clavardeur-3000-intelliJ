@@ -55,12 +55,12 @@ public class LoginWindowController {
 				}
 			});
 		}else{
-			logInButton.setText("yoyo");
+
 			System.out.println("Connected as : " + userNameTextField.getText());
 
 			Controller.getInstance().logIn(userNameTextField.getText());
 
-			mainApp.getRootLayout().setCenter(null);//TODO Who needs to do this ? (same problem for everytime you want to update the main window...)
+			mainApp.getRootLayout().setCenter(null);
 			mainApp.showUsersOverview();
 		}
 	}

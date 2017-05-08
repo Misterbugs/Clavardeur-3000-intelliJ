@@ -26,7 +26,6 @@ public class testNet{
 		try {
 			IPAddress = InetAddress.getByName("localhost");
 		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		port = _port;
@@ -53,7 +52,6 @@ public class testNet{
 						System.out.println("Le message deserialse " + o.getClass() + "\nMessage : " + msg.getTextMessage());
 						
 					} catch (IOException | ClassNotFoundException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					
@@ -75,7 +73,6 @@ public class testNet{
 		try {
 			sock.send(sendData);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -98,7 +95,6 @@ public class testNet{
 			sock.send(new DatagramPacket(b, b.length, message.getDestinationAddress(), message.getDestinationPort()));
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		};
 		

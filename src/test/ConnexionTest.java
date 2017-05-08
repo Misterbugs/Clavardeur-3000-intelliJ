@@ -13,13 +13,19 @@ public class ConnexionTest {
     /**
      *
      */
+
+
+
+
     @Test
-    public void creatinOfLocalUserIsNotNull(){
-        System.out.println("This is a connexion test");
+    public void creatingOfLocalUserIsNotNull(){
+        System.out.println("Testing local user creation");
         Model model = Model.getInstance();
         model.createLocalUser("John Doe");
         assertNotNull(model.getLocalUser());
 
     }
+
+
 
 }

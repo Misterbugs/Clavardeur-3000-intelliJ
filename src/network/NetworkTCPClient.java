@@ -39,7 +39,6 @@ public class NetworkTCPClient {
             socket.getOutputStream().write(b);
 
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

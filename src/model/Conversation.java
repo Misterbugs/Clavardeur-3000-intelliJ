@@ -15,7 +15,7 @@ import message.MsgText;
 public class Conversation implements Serializable, IConversationSubject{
 	
 	/**
-	 * The complete list of previous messages TODO change MsgText into Message
+	 * The complete list of previous messages
 	 */
 	private ArrayList<MsgText> messageList = new ArrayList<MsgText>();
 

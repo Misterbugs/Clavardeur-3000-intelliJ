@@ -37,7 +37,6 @@ public class Network implements INetworkSubject{
 	
 	@Override
 	public void register(INetworkObserver o) {
-		// TODO Auto-generated method stub
 		observers.add(o);
 	}
 
@@ -70,7 +69,7 @@ public class Network implements INetworkSubject{
 		try {
 			sock = new DatagramSocket(port);
 		} catch (SocketException e1) {
-			System.out.println("Canno't bind : port "+port+" already taken.");
+			System.out.println("Cannot bind : port "+port+" is already taken.");
 			System.out.println("Exiting...");
 			System.exit(-1);
 			e1.printStackTrace();
@@ -96,11 +95,9 @@ public class Network implements INetworkSubject{
 
 					}else{
 						System.out.println("Object received is not a message, class is " + o.getClass().toString());
-						//TODO make a throw declaration?
 					}
 
 				} catch (IOException | ClassNotFoundException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -108,22 +105,15 @@ public class Network implements INetworkSubject{
 		
 		t.start();
 	}
-	
-	
-	public void sendMessage(String data){
-		System.out.println("Sending");
-		DatagramPacket sendData = new DatagramPacket(data.getBytes(), data.getBytes().length, localAddress.getIpAdress(), port);
-		try {
-			sock.send(sendData);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-	
-	
-	public void sendMessage(Message message){
+
+
+	/**
+	 * Sends a message over UDP
+	 * @param message the message containing the receiver address
+	 * @return 1 if the message was sent, 0 if there was a problem
+	 */
+
+	public int sendMessage(Message message){
 
 		try {
 
@@ -131,9 +121,10 @@ public class Network implements INetworkSubject{
 			sock.send(new DatagramPacket(b, b.length, message.getDestinationAddress(), message.getDestinationPort()));
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return 0;
 		}
+		return 1;
 	
 	}
 
@@ -150,7 +141,6 @@ public class Network implements INetworkSubject{
 			b = bos.toByteArray();
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return b;
@@ -196,11 +186,10 @@ public class Network implements INetworkSubject{
 							continue;
 						}
 						else {
-							//netint.getInterfaceAddresses().get(0);
-							//System.out.println(" cptAddr : " + cptAddr);
+
 							System.out.println("Local Address : " + addr.toString());
-							System.out.println("Broadcast Address : "   + netint.getInterfaceAddresses().get(cptAddr).getBroadcast().toString()); //TODO Réparer, maitenant ça marche peut-être
-						//	System.out.println("Generated Broadcast mask : " +  netint.getInterfaceAddresses().get(0).getBroadcast().);
+							System.out.println("Broadcast Address : "   + netint.getInterfaceAddresses().get(cptAddr).getBroadcast().toString());
+
 							System.out.println("Network mask : /" + netint.getInterfaceAddresses().get(cptAddr).getNetworkPrefixLength());
 							broadcastAddress = new Address (netint.getInterfaceAddresses().get(cptAddr).getBroadcast(), port );
 							localAddress = new Address(addr, port);

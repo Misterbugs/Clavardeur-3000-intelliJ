@@ -45,7 +45,7 @@ public class Model {
 	
 	private Model(){
 			//knownUsers = FXCollections.observableArrayList();
-			simpleConversations=FXCollections.observableHashMap(); //TODO change that
+			simpleConversations=FXCollections.observableHashMap();
 	}
 
 
