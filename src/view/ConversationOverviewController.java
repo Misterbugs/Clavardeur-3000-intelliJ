@@ -2,12 +2,18 @@ package view;
 
 import controller.Controller;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import message.Message;
@@ -16,7 +22,9 @@ import message.MsgFactory;
 import message.MsgText;
 import model.*;
 
+import javax.swing.*;
 import java.io.File;
+import java.util.Observable;
 
 public class ConversationOverviewController implements IConversationObserver {
 	@FXML
@@ -35,6 +43,8 @@ public class ConversationOverviewController implements IConversationObserver {
 	private TextArea previousMessages;
 
 	@FXML
+	private VBox theVBox = new VBox();
+	@FXML
 	private TextArea textToSend;
 
 	private Conversation conversation;
@@ -52,6 +62,9 @@ public class ConversationOverviewController implements IConversationObserver {
 	 */
 	@FXML
 	private void initialize() {
+
+
+		theVBox.setStyle("-fx-background-color:#f9ffe5;");
 
 		model = Model.getInstance();
 
@@ -253,14 +266,36 @@ public class ConversationOverviewController implements IConversationObserver {
 		Platform.runLater(()->{
 		String fullUserName = User.fullUserName(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()));
 			if(fullUserName.equals(model.getLocalUser().getFullUserName())){
-				previousMessages.appendText("You : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
+				Text theText = new Text(((MsgText) mesg).getTextMessage() + System.lineSeparator());
+				TextFlow newText = new TextFlow(theText);
+				newText.setTextAlignment(TextAlignment.RIGHT);
+				newText.setMaxWidth((theVBox.getWidth() / 2) - 1 );
+				newText.setPrefWidth(theVBox.getWidth()/4);
+				newText.setMinWidth(theVBox.getWidth()/5);
+				newText.setTranslateX(boxSize);
+				newText.setStyle("-fx-background-color: #2076ff; -fx-text-fill: white; -fx-padding: 20px; -fx-fill-width: false;" );;
+				//previousMessages.appendText("You : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
+				//previousMessages.appendText(newText);
+				theVBox.getChildren().add(newText);
+
 
 
 
 
 
 			}else{
-				previousMessages.appendText(mesg.getSourceUserName() + " : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
+				//previousMessages.appendText(mesg.getSourceUserName() + " : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
+				Text theText = new Text(((MsgText) mesg).getTextMessage() + System.lineSeparator());
+				TextFlow newText = new TextFlow(theText);
+				newText.setTextAlignment(TextAlignment.LEFT);
+				newText.setMaxWidth((theVBox.getWidth() / 2) - 1 );
+				newText.setPrefWidth(theVBox.getWidth()/4);
+				newText.setMinWidth(theVBox.getWidth()/5);
+				newText.setTranslateX(boxSize);
+				newText.setStyle("-fx-background-color: #e1ebff; -fx-text-fill: #2f2f2f; -fx-padding: 20px; -fx-fill-width: false;" );;
+				//previousMessages.appendText("You : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
+				//previousMessages.appendText(newText);
+				theVBox.getChildren().add(newText);
 
 				Thread t = new Thread(() -> {
 					Media sound = new Media(this.getClass().getResource("/ah.wav").toString());
