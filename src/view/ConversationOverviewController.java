@@ -47,12 +47,6 @@ public class ConversationOverviewController implements IConversationObserver {
 	private MainApp mainApp;
 
 
-//	public ConversationOverviewController(Conversation conversation) {
-//		this.conversation = conversation;
-//	}
-//	
-
-
 	/**
 	 * Initializer called after the fxml file has been loaded
 	 */
@@ -85,40 +79,19 @@ public class ConversationOverviewController implements IConversationObserver {
 
 						}
 
-					}); //TODO please respect Liskov
-					/*Message msg;
-					msg = MsgFactory.createFileAskMessage(model.getLocalUser(), ((SimpleConversation) conversation).getReceiver(), file.getName(), file.length(), 987);
-					mainApp.getNet().sendMessage(msg);*/
+					});
 				}
 			}
 		);
-		//labelDestName.getLabelFor().accessibleTextProperty().setValue("Test");
-		//Lambda to make the enter key send message
-		labelDestName.setText("epifhepolfihepifheph");
 
+
+		//Lambda to make the enter key send message
 		textToSend.setOnKeyPressed((event) -> {
-			/*if (event.getCode() == KeyCode.SHIFT) {
-				System.out.println("Shift Pressed");
-				shiftPressed = true;
-			}*/
-			//labelDestName.getLabelFor().accessibleTextProperty().setValue("Test");
 			if ((event.getCode() == KeyCode.ENTER) && !shiftPressed) {
 				event.consume();
 				sendText();
 			}
 		});
-
-
-
-		/*textToSend.setOnKeyReleased((event) -> {
-			if (event.getCode() == KeyCode.SHIFT) {
-				shiftPressed = false;
-				System.out.println("Shift released");
-			}
-
-		});
-		*/
-
 
 	}
 

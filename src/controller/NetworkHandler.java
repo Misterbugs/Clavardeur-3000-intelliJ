@@ -149,7 +149,6 @@ public class NetworkHandler implements INetworkObserver{
 						if (file != null) {
 
 							Address tcpAddr = new Address(sourceUser.getAddress().getIpAdress(), msgReplyFile.getReceivingTCPPort());
-							//Path path = Paths.get(file.toURI());
 							RandomAccessFile f = null;
 							byte[] fileData = null;
 							try {
@@ -332,6 +331,9 @@ public class NetworkHandler implements INetworkObserver{
 		sendMessage(MsgFactory.createReplyFileMessage(Model.getInstance().getLocalUser(), distantUser, -1, false));
 
 	}
+
+
+
 
 	/**
 	 * Sends one or multiple Hello messages

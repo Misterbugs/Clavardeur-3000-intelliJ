@@ -2,6 +2,7 @@ package test;
 
 import controller.NetworkHandler;
 import message.Message;
+import message.MsgAskFile;
 import message.MsgFactory;
 import message.MsgText;
 import model.Model;
@@ -17,16 +18,16 @@ import static org.junit.Assert.assertNotNull;
 public class MessageTest {
     NetworkHandler networkHandler = new NetworkHandler(Network.getInstance());
     User localUser = Model.getInstance().getLocalUser();
-    @Test
-    public void messageTest(){
 
-        networkHandler.sendHello(true,0);
+    @Test
+    public void messageTest() {
+
+        networkHandler.sendHello(true, 0);
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
 
 
         //Checks if a conversation between the localUser and himself was created
@@ -37,7 +38,7 @@ public class MessageTest {
 
 
     @Test
-    public void sendMessage(){
+    public void sendMessage() {
         Message mesg = MsgFactory.createMessage(localUser, localUser, "This is a test Message");
         networkHandler.sendMessage(mesg);
 
@@ -51,9 +52,9 @@ public class MessageTest {
 
 
         System.out.println(receivedMessage.getClass());
-        assert(receivedMessage.getClass() == MsgText.class);
-        assert(((MsgText)receivedMessage).getTextMessage().equals(((MsgText)mesg).getTextMessage()));
+        assert (receivedMessage.getClass() == MsgText.class);
+        assert (((MsgText) receivedMessage).getTextMessage().equals(((MsgText) mesg).getTextMessage()));
 
     }
-
+    
 }
