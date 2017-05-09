@@ -15,6 +15,9 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
+import javafx.scene.web.HTMLEditor;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import message.Message;
@@ -40,8 +43,11 @@ public class ConversationOverviewController implements IConversationObserver {
 	@FXML
 	private Button button;
 
+	//private TextArea previousMessages;
 	@FXML
-	private TextArea previousMessages;
+	private WebView previousMessages = new WebView();
+
+	//private WebEngine webEngine = previousMessages.getEngine();
 
 	@FXML
 	private VBox theVBox = new VBox();
@@ -58,6 +64,8 @@ public class ConversationOverviewController implements IConversationObserver {
 	private MainApp mainApp;
 
 	private ScrollPane mainPane;
+
+	private String allMessages = new String();
 
 
 	/**
@@ -149,11 +157,11 @@ public class ConversationOverviewController implements IConversationObserver {
 		return this.conversation;
 	}
 
-	public TextArea getPreviousMessages() {
+	public WebView getPreviousMessages() {
 		return previousMessages;
 	}
 
-	public void setPreviousMessages(TextArea previousMessages) {
+	public void setPreviousMessages(WebView previousMessages) {
 		this.previousMessages = previousMessages;
 	}
 
@@ -197,7 +205,9 @@ public class ConversationOverviewController implements IConversationObserver {
 						});
 					});
 
-					Platform.runLater(() -> {previousMessages.appendText("NOT DELIVERED : " + ((MsgText) msg).getTextMessage() + " (no ACK from " + ((SimpleConversation) conversation).getReceiver().getUserNameString()+ ")") ;});
+					//Platform.runLater(() -> {previousMessages.set("NOT DELIVERED : " + ((MsgText) msg).getTextMessage() + " (no ACK from " + ((SimpleConversation) conversation).getReceiver().getUserNameString()+ ")"); ;});
+					Platform.runLater(() -> {previousMessages.getEngine().loadContent("NOT DELIVERED : " + ((MsgText) msg).getTextMessage() + " (no ACK from " + ((SimpleConversation) conversation).getReceiver().getUserNameString()+ ")"); ;});
+
 				}
 
 			});
@@ -272,7 +282,7 @@ public class ConversationOverviewController implements IConversationObserver {
 		Platform.runLater(()->{
 		String fullUserName = User.fullUserName(mesg.getSourceUserName(), new Address(mesg.getSourceAddress(), mesg.getSourcePort()));
 			if(fullUserName.equals(model.getLocalUser().getFullUserName())){
-				Text theText = new Text(((MsgText) mesg).getTextMessage() + System.lineSeparator());
+				/*Text theText = new Text(((MsgText) mesg).getTextMessage() + System.lineSeparator());
 				TextFlow newText = new TextFlow(theText);
 				newText.setTextAlignment(TextAlignment.RIGHT);
 				//double boxSize = ((MsgText) mesg).getTextMessage().length() * 5 + 20;
@@ -288,18 +298,21 @@ public class ConversationOverviewController implements IConversationObserver {
 				newText.setStyle("-fx-background-color: #2076ff; -fx-color-label-visible: true; -fx-text-fill: white; -fx-padding: 20px; -fx-fill-width: false; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0); " );;
 				//previousMessages.appendText("You : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
 				//previousMessages.appendText(newText);
-				theVBox.getChildren().add(newText);
-
-
-
+				theVBox.getChildren().add(newText);*/
+				allMessages = allMessages + "<b>You :</b> " + ((MsgText) mesg).getTextMessage() + System.lineSeparator() + "</br>";
+				//previousMessages.setHtmlText("<b>You :</b> " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
+				//previousMessages.getEngine().loadContent("<b>You :</b> " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
+				previousMessages.getEngine().loadContent(allMessages);
 
 
 
 
 			}else{
-				//previousMessages.appendText(mesg.getSourceUserName() + " : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
-				Text theText = new Text(((MsgText) mesg).getTextMessage() + System.lineSeparator());
-				TextFlow newText = new TextFlow(theText);
+				//previousMessages.setHtmlText(mesg.getSourceUserName() + " : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
+				//previousMessages.getEngine().loadContent(mesg.getSourceUserName() + " : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
+				allMessages = allMessages + "<i>"+ mesg.getSourceUserName() + "</i>" + ((MsgText) mesg).getTextMessage() + System.lineSeparator() + "</br>";
+				//Text theText = new Text(((MsgText) mesg).getTextMessage() + System.lineSeparator());
+				/*TextFlow newText = new TextFlow(theText);
 				newText.setTextAlignment(TextAlignment.LEFT);
                 double boxSize = 100;
                 newText.setMaxWidth(boxSize);
@@ -309,8 +322,9 @@ public class ConversationOverviewController implements IConversationObserver {
 
 				newText.setStyle("-fx-background-color: #e1ebff; -fx-text-fill: #2f2f2f; -fx-margin: 20px; -fx-fill-width: false; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0); " );
 				//previousMessages.appendText("You : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
-				//previousMessages.appendText(newText);
-				theVBox.getChildren().add(newText);
+
+				theVBox.getChildren().add(newText);*/
+				//previousMessages.appendText(theText);
 
 				Thread t = new Thread(() -> {
 					Media sound = new Media(this.getClass().getResource("/ah.wav").toString());
