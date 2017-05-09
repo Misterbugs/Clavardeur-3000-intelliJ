@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -56,6 +57,8 @@ public class ConversationOverviewController implements IConversationObserver {
 	//reference to the main application
 	private MainApp mainApp;
 
+	private ScrollPane mainPane;
+
 
 	/**
 	 * Initializer called after the fxml file has been loaded
@@ -64,7 +67,10 @@ public class ConversationOverviewController implements IConversationObserver {
 	private void initialize() {
 
 
-		theVBox.setStyle("-fx-background-color:#f9ffe5;");
+		theVBox.setStyle("-fx-background-color:#fbfffd;");
+		mainPane = new ScrollPane();
+		mainPane.setContent(theVBox);
+		mainPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
 		model = Model.getInstance();
 
@@ -269,15 +275,21 @@ public class ConversationOverviewController implements IConversationObserver {
 				Text theText = new Text(((MsgText) mesg).getTextMessage() + System.lineSeparator());
 				TextFlow newText = new TextFlow(theText);
 				newText.setTextAlignment(TextAlignment.RIGHT);
-				newText.setMaxWidth((theVBox.getWidth() / 2) - 1 );
-				newText.setPrefWidth(theVBox.getWidth()/4);
-				newText.setMinWidth(theVBox.getWidth()/5);
-				double boxSize = theVBox.getWidth() - newText.getMaxWidth();
-				newText.setTranslateX(boxSize);
-				newText.setStyle("-fx-background-color: #2076ff; -fx-text-fill: white; -fx-padding: 20px; -fx-fill-width: false;" );;
+				//double boxSize = ((MsgText) mesg).getTextMessage().length() * 5 + 20;
+				//double boxMod = Math.floorMod(boxSize, (int) (((theVBox.getWidth())/2 )- 10));
+				//newText.setMaxWidth(((theVBox.getWidth())/2 )- 10);
+                double boxSize = 100;
+                newText.setMaxWidth(boxSize);
+				newText.setPrefWidth(boxSize);
+				newText.setMinWidth(boxSize);
+
+				double transXSize = theVBox.getWidth() - ( boxSize + 10 );
+				newText.setTranslateX(transXSize);
+				newText.setStyle("-fx-background-color: #2076ff; -fx-color-label-visible: true; -fx-text-fill: white; -fx-padding: 20px; -fx-fill-width: false; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0); " );;
 				//previousMessages.appendText("You : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
 				//previousMessages.appendText(newText);
 				theVBox.getChildren().add(newText);
+
 
 
 
@@ -289,11 +301,13 @@ public class ConversationOverviewController implements IConversationObserver {
 				Text theText = new Text(((MsgText) mesg).getTextMessage() + System.lineSeparator());
 				TextFlow newText = new TextFlow(theText);
 				newText.setTextAlignment(TextAlignment.LEFT);
-				newText.setMaxWidth((theVBox.getWidth() / 2) - 1 );
-				newText.setPrefWidth(theVBox.getWidth()/4);
-				newText.setMinWidth(theVBox.getWidth()/5);
-				
-				newText.setStyle("-fx-background-color: #e1ebff; -fx-text-fill: #2f2f2f; -fx-padding: 20px; -fx-fill-width: false;" );;
+                double boxSize = 100;
+                newText.setMaxWidth(boxSize);
+                newText.setPrefWidth(boxSize);
+                newText.setMinWidth(boxSize);
+
+
+				newText.setStyle("-fx-background-color: #e1ebff; -fx-text-fill: #2f2f2f; -fx-margin: 20px; -fx-fill-width: false; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0); " );
 				//previousMessages.appendText("You : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
 				//previousMessages.appendText(newText);
 				theVBox.getChildren().add(newText);
