@@ -30,6 +30,8 @@ import javax.swing.*;
 import java.io.File;
 import java.util.Observable;
 
+import static java.awt.SystemColor.text;
+
 public class ConversationOverviewController implements IConversationObserver {
 	@FXML
 	private FileChooser fileChooser;
@@ -299,7 +301,7 @@ public class ConversationOverviewController implements IConversationObserver {
 				//previousMessages.appendText("You : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
 				//previousMessages.appendText(newText);
 				theVBox.getChildren().add(newText);*/
-				allMessages = allMessages + "<b>You :</b> " + ((MsgText) mesg).getTextMessage() + System.lineSeparator() + "</br>";
+				allMessages = allMessages + "<p style='text-align:right';><b>You :</b> " + ((MsgText) mesg).getTextMessage() + System.lineSeparator() + "</p>";
 				//previousMessages.setHtmlText("<b>You :</b> " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
 				//previousMessages.getEngine().loadContent("<b>You :</b> " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
 				previousMessages.getEngine().loadContent(allMessages);
@@ -310,7 +312,8 @@ public class ConversationOverviewController implements IConversationObserver {
 			}else{
 				//previousMessages.setHtmlText(mesg.getSourceUserName() + " : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
 				//previousMessages.getEngine().loadContent(mesg.getSourceUserName() + " : " + ((MsgText) mesg).getTextMessage() + System.lineSeparator());
-				allMessages = allMessages + "<i>"+ mesg.getSourceUserName() + "</i>" + ((MsgText) mesg).getTextMessage() + System.lineSeparator() + "</br>";
+				allMessages = allMessages + "<i>"+ mesg.getSourceUserName() + " : </i>" + ((MsgText) mesg).getTextMessage() + System.lineSeparator() + "</br>";
+				previousMessages.getEngine().loadContent(allMessages);
 				//Text theText = new Text(((MsgText) mesg).getTextMessage() + System.lineSeparator());
 				/*TextFlow newText = new TextFlow(theText);
 				newText.setTextAlignment(TextAlignment.LEFT);

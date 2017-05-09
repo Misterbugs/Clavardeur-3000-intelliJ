@@ -79,7 +79,6 @@ public class MainApp extends Application {
 			//Set user overview in the center of root layout
 			rootLayout.setCenter(loginWindow);
 
-
 			LoginWindowController controller = loader.getController();
 			controller.setMainApp(this);
 

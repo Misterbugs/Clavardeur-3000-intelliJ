@@ -20,17 +20,17 @@
          <image>
             <Image url="@../../../../Pictures/trombone.png" />
          </image></ImageView>
-      <Button fx:id="SendButton" layoutX="529.0" layoutY="436.0" mnemonicParsing="false" onAction="#handleSendButtonAction" prefHeight="91.0" prefWidth="52.0" text="Send" />
+      <Button fx:id="SendButton" layoutX="489.0" layoutY="484.0" mnemonicParsing="false" onAction="#handleSendButtonAction" prefHeight="49.0" prefWidth="91.0" text="Message" />
      <!-- <TextArea fx:id="previousMessages" editable="false" layoutX="140.0" layoutY="49.0" prefHeight="335.0" prefWidth="381.0" /> -->
-      <TextArea fx:id="textToSend" layoutX="140.0" layoutY="438.0" prefHeight="91.0" prefWidth="381.0" />
+      <TextArea fx:id="textToSend" layoutX="140.0" layoutY="438.0" prefHeight="91.0" prefWidth="340.0" />
 
       <ImageView fitHeight="68.0" fitWidth="110.0" layoutX="14.0" layoutY="461.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../../../../Pictures/Lamas/1588183-sipa-00686196-000001.jpg" />
          </image>
       </ImageView>
-      <Button fx:id="fileButton" layoutX="529.0" layoutY="397.0" mnemonicParsing="false" text="Send File" />
-      <WebView fx:id="previousMessages" layoutX="140.0" layoutY="49.0" prefHeight="335.0" prefWidth="381.0" />
+      <Button fx:id="fileButton" layoutX="490.0" layoutY="439.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="91.0" text="File" />
+      <WebView fx:id="previousMessages" layoutX="140.0" layoutY="49.0" prefHeight="335.0" prefWidth="438.0" />
 
    </children>
 </AnchorPane>
